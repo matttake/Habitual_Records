@@ -1,4 +1,4 @@
-# habitual_records
+# Habitual Records
 
 A new Flutter project.
 
