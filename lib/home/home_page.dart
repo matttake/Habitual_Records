@@ -1,96 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import '../login/login.dart';
+import '../record/record.dart';
+import '../mypage/mypage.dart';
+import '../setup/setup.dart';
 
-class MainPage extends StatelessWidget {
-  MainPage({Key? key}) : super(key: key);
-
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('記録帳'),
-          // actions: [
-          //   IconButton(
-          //     // Screen transition to loginPage
-          //     onPressed: () async {
-          //       if (FirebaseAuth.instance.currentUser != null) {
-          //         await Navigator.push(
-          //           context,
-          //           MaterialPageRoute(
-          //               builder: (context) => const MyPage(),
-          //               fullscreenDialog: true),
-          //         );
-          //       } else {
-          //         await Navigator.push(
-          //           context,
-          //           MaterialPageRoute(
-          //               builder: (context) => const LoginPage(),
-          //               fullscreenDialog: true),
-          //         );
-          //       }
-          //     },
-          //     icon: const Icon(Icons.person),
-          //   ),
-          // ],
-        ),
-        body: HomePage(),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("習慣化記録"),
+        actions: [
+          IconButton(
+            // Screen transition to loginPage
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Login()));
+            },
+            icon: const Icon(Icons.login),
+          ),
+        ],
       ),
+      drawer: Container(
+        width: 200,
+        child: SafeArea(
+          child: Drawer(
+            child: ListView(
+              children: [
+                SizedBox(
+                    height: 60,
+                    child: DrawerHeader(
+                      child: Text('各種ページ'),
+                    )),
+                ListTile(
+                  title: Text("記録"),
+                  trailing: Icon(Icons.trending_up),
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Record()));
+                  },
+                ),
+                ListTile(
+                  title: Text("設定"),
+                  trailing: Icon(Icons.settings),
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Setup()));
+                  },
+                ),
+                ListTile(
+                  title: Text("マイページ"),
+                  trailing: Icon(Icons.account_circle),
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => MyPage()));
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: HomeBody(),
     );
   }
 }
 
-// Future showConfirmDialog(
-//   BuildContext context,
-//   Book book,
-//   BookListModel model,
-// ) {
-//   return showDialog(
-//     context: context,
-//     barrierDismissible: false,
-//     builder: (_) {
-//       return AlertDialog(
-//         title: const Text("削除の確認"),
-//         content: Text("『${book.title}』を削除しますか？"),
-//         actions: [
-//           TextButton(
-//             child: const Text("いいえ"),
-//             onPressed: () => Navigator.pop(context),
-//           ),
-//           TextButton(
-//             child: const Text("はい"),
-//             onPressed: () async {
-//               // modelで削除
-//               await model.delete(book);
-//               Navigator.pop(context);
-//               final snackBar = SnackBar(
-//                 backgroundColor: Colors.red,
-//                 content: Text('${book.title}を削除しました'),
-//               );
-//               model.fetchBookList();
-//               ScaffoldMessenger.of(context).showSnackBar(snackBar);
-//             },
-//           ),
-//         ],
-//       );
-//     },
-//   );
-// }
-
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class HomeBody extends StatefulWidget {
+  const HomeBody({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomeBody> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomeBody> {
   DateTime now = DateTime.now();
-  String time = DateFormat('yyyy/MM/dd(E)').format(DateTime.now());
-  String time_ja = DateFormat('yyyy/MM/dd(E)', "ja").format(DateTime.now());
-  String hoge = DateFormat.yMMMEd('ja').format(DateTime.now());
+  String time = DateFormat.yMMMEd('ja').format(DateTime.now());
 
   String? selectedValue;
   List<String> items = [
@@ -106,15 +93,9 @@ class _HomePageState extends State<HomePage> {
     return Center(
       child: Column(
         children: [
-          // element1:DropdownButton
+          // element0:Date
           Center(
             child: Text(time),
-          ),
-          Center(
-            child: Text(time_ja),
-          ),
-          Center(
-            child: Text(hoge),
           ),
 
           // element1:DropdownButton
