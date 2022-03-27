@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../home/home_page.dart';
+import '../home/home.dart';
 import 'login_model.dart';
 
 class Login extends StatelessWidget {
@@ -48,7 +48,7 @@ class Login extends StatelessWidget {
                         await login_ins.register(
                             email_provider.state, password_provider.state);
                         // ユーザー登録に成功した場合
-                        await login_ins.Dialog(context, ok_message, HomePage());
+                        await login_ins.Dialog(context, ok_message, Home());
                       } catch (e) {
                         // ユーザー登録に失敗した場合
                         String msg = "登録に失敗しました：${e.toString()}";
@@ -70,7 +70,7 @@ class Login extends StatelessWidget {
                         // ログインに成功した場合
                         await Navigator.of(context).pushReplacement(
                           MaterialPageRoute(builder: (context) {
-                            return HomePage();
+                            return Home();
                           }),
                         );
                       } catch (e) {
