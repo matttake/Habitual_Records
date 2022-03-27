@@ -23,6 +23,7 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
+      drawerEdgeDragWidth: 0,
       drawer: Container(
         width: 200,
         child: SafeArea(

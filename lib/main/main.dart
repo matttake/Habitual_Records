@@ -1,8 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import '../home/home_page.dart';
+import '../login/login.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +23,14 @@ class MyApp extends StatelessWidget {
     Firebase.initializeApp(); // new
     return MaterialApp(
       title: "Flutter App",
-      home: HomePage(),
+      home: (() {
+        // まだAuthを実装していない
+        if (FirebaseAuth.instance.currentUser != null) {
+          return HomePage();
+        } else {
+          return Login();
+        }
+      })(),
     );
   }
 }
