@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../login/login.dart';
 import '../record/record.dart';
 import '../mypage/mypage.dart';
 import '../setup/setup.dart';
@@ -101,8 +98,14 @@ class HomeBody extends ConsumerWidget {
         // element2:SubmitButton
         TextButton(
           child: Text("登録"),
-          onPressed: () {
-            // todo:登録処理
+          onPressed: () async {
+            await add_register();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('登録しました。'),
+              ),
+            );
+
             /// Firebaseに登録
             /// Datetimeの日付と連動させたい
             /// すでにDBに登録されている場合は、「上書きしてもいいか？」
