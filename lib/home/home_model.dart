@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 final List<String> items = [
   '10',
@@ -26,6 +27,19 @@ class HomeModel extends ChangeNotifier {
     this.selectedValue = filed_text;
     notifyListeners();
   }
+}
+
+Future add_register() async {
+  final doc = FirebaseFirestore.instance
+      .collection('users')
+      .doc("user1") //Auth情報をリンクさせる
+      .collection("2022") // year
+      .doc("01"); // month
+
+  await doc.set({
+    'day': "1",
+    'minute': 10,
+  });
 }
 
 class DropDown extends StatelessWidget {
