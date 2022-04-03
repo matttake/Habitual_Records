@@ -5,6 +5,7 @@ import '../mypage/mypage.dart';
 import '../setup/setup.dart';
 import 'home_model.dart';
 
+// Header部分
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -70,10 +71,12 @@ class Home extends StatelessWidget {
   }
 }
 
+// Body部分
 class HomeBody extends ConsumerWidget {
-  // DateTime now = DateTime.now();
-  // String time = DateFormat.yMMMEd('ja').format(DateTime.now());
-  // String? selectedValue;
+  HomeBody({Key? key}) : super(key: key);
+
+  // 変数宣言
+  String result_msg = '';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -99,17 +102,38 @@ class HomeBody extends ConsumerWidget {
         TextButton(
           child: Text("登録"),
           onPressed: () async {
-            await add_register();
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('登録しました。'),
-              ),
-            );
+            result_msg = await ins.add_register();
 
-            /// Firebaseに登録
-            /// Datetimeの日付と連動させたい
-            /// すでにDBに登録されている場合は、「上書きしてもいいか？」
-            /// のpop-Up出して警告出したい。
+            /// scackbar部分は別関数として切り出したい。ifの乱立は可読性悪い。
+            // 登録成功時
+            if (result_msg == register_ok) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Colors.lightBlueAccent,
+                content: Text(result_msg),
+              ));
+            }
+            // 作業時間未選択時
+            else if (result_msg == register_ng) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Colors.red,
+                content: Text(result_msg),
+              ));
+            }
+            // 二重登録時
+            /// ダイアログ出して、（上書きしますか？)を表示したい
+            // if (result_msg == register_ng) {
+            //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //     backgroundColor: Colors.red,
+            //     content: Text(result_msg),
+            //   ));
+            // }
+            // firebase側のエラー時
+            else {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Colors.amberAccent,
+                content: Text(result_msg),
+              ));
+            }
           },
         ),
       ],
