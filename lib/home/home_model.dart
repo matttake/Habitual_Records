@@ -48,7 +48,9 @@ class HomeModel extends ChangeNotifier {
           .collection('users')
           .doc(user_id)
           .collection(year)
-          .doc(month);
+          .doc(month)
+          .collection(day)
+          .doc();
 
       try {
         await doc.set({

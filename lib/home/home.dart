@@ -12,16 +12,16 @@ class Home extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("習慣化記録"),
-        // actions: [
-        //   IconButton(
-        //     // Screen transition to loginPage
-        //     onPressed: () {
-        //       Navigator.push(
-        //           context, MaterialPageRoute(builder: (context) => Login()));
-        //     },
-        //     icon: const Icon(Icons.login),
-        //   ),
-        // ],
+        actions: [
+          IconButton(
+            // Screen transition to loginPage
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Record()));
+            },
+            icon: const Icon(Icons.bar_chart),
+          ),
+        ],
       ),
       drawerEdgeDragWidth: 0,
       drawer: Container(
@@ -37,7 +37,7 @@ class Home extends StatelessWidget {
                     )),
                 ListTile(
                   title: Text("記録"),
-                  trailing: Icon(Icons.trending_up),
+                  trailing: Icon(Icons.bar_chart),
                   onTap: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => Record()));
