@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -37,24 +36,20 @@ class HomeModel extends ChangeNotifier {
     // 作業時間が選択されていれば、Firebaseへの登録処理を実施
     if (selectedValue != null) {
       // 日付情報の取得
-      final String year = DateFormat.y().format(DateTime.now());
-      final String month = DateFormat.M().format(DateTime.now());
+      final String year_month = DateFormat('yyyyMM').format(DateTime.now());
       final String day = DateFormat.d().format(DateTime.now());
-      // ユーザーのUserID取得
+      // UserID取得
       final String? user_id = FirebaseAuth.instance.currentUser?.uid;
 
       // Firestoreに登録
       final doc = FirebaseFirestore.instance
           .collection('users')
           .doc(user_id)
-          .collection(year)
-          .doc(month)
-          .collection(day)
-          .doc();
+          .collection(year_month)
+          .doc(day);
 
       try {
         await doc.set({
-          'day': day,
           'minute': selectedValue,
         });
         snackbar_msg = register_ok;
