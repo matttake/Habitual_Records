@@ -20,14 +20,13 @@ class RecordBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final record_ins = ref.watch(recordProvider.notifier);
-    record_ins.value_initialize();
+    final insRecord = ref.watch(recordProvider.notifier);
 
     return FutureBuilder(
-        future: record_ins.total_time_set(),
+        future: insRecord.getTimeSet(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -49,11 +48,11 @@ class RecordBody extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(0)),
                 margin: const EdgeInsets.all(0.0),
                 color: const Color(0xff2c4260),
-                child: RecordBarChart(),
+                child: RecordBarChart(snapshot.data),
               ),
             );
           }
-          return Text('もう一度やり直してください。');
+          return const Text('もう一度やり直してください。');
         });
   }
 }

@@ -4,11 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
-import 'dart:async';
 
-// できればグローバル変数はあまり使いたくない。Widget内に動的に値変える方法検討
-List<Map<String, int>> total_time_array = [];
-final List<String> month_array = [
+const List<String> monthArray = [
   '01',
   '02',
   '03',
@@ -31,36 +28,30 @@ class RecordNotifier extends StateNotifier<String> {
   RecordNotifier() : super("");
 
   // Firestoreから値取得して、月ごとの合計時間を配列に格納
-  Future total_time_set() async {
-    final String? user_id = FirebaseAuth.instance.currentUser?.uid;
+  Future getTimeSet() async {
+    List<Map<String, int>> _totalTimeArray = [];
+    final String? userId = FirebaseAuth.instance.currentUser?.uid;
     final String year = DateFormat.y().format(DateTime.now());
 
     /// Reference(参照先の指定)
     final DocumentReference docRef =
-        FirebaseFirestore.instance.collection('users').doc(user_id);
+        FirebaseFirestore.instance.collection('users').doc(userId);
 
     /// Snapshot:Reference(参照先)の中身の実態。
     /// Snapshot(実態)から値を取り出す。
-    for (var month in month_array) {
-      final QuerySnapshot doces_snapshot =
-          await docRef.collection(year + month).get();
-      final List<QueryDocumentSnapshot> day_doces_array = doces_snapshot.docs;
+    for (var month in monthArray) {
+      QuerySnapshot docesSnapshot = await docRef.collection(year + month).get();
+      final List<QueryDocumentSnapshot> docsDayArray = docesSnapshot.docs;
 
       int total = 0;
-      for (var day in day_doces_array) {
-        int day_minute = int.parse(day.get('minute'));
-        total = total + day_minute;
+      for (var day in docsDayArray) {
+        int dayMinute = int.parse(day.get('minute'));
+        total = total + dayMinute;
       }
-      total_time_array.add({month: total});
+      _totalTimeArray.add({month: total});
     }
-    // FutureBuilder用に適当に値返却
-    return 'ok';
-  }
-
-  // 配列初期化
-  // 関数が呼ばれる度に内部的に初期化したい。できるはず。
-  void value_initialize() {
-    total_time_array = [];
+    // FutureBuilderに値返却
+    return _totalTimeArray;
   }
 }
 
@@ -68,6 +59,9 @@ class RecordNotifier extends StateNotifier<String> {
 /// コンストラクタのルールがいまいちわかっていない。。。
 /// とりあえず別ファイルから参照したかったから、'_'無しにした。
 class RecordBarChart extends ConsumerWidget {
+  List<Map<String, int>> _totalTimeArray = [];
+  RecordBarChart(this._totalTimeArray, {Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return BarChart(
@@ -108,7 +102,6 @@ class RecordBarChart extends ConsumerWidget {
       );
 
   // ②で使用⇛barタイトルの設定
-  // ↓WidgetのKey：valueの挙動はどうなっている？なんでTitleItem分だけ何回も読み込まれる？
   Widget getTitles(double value, TitleMeta meta) {
     const style = TextStyle(
       color: Color(0xff7589a2),
@@ -116,35 +109,9 @@ class RecordBarChart extends ConsumerWidget {
       fontSize: 14,
     );
 
-    /// double型の小数点がうざいからint型変換経由で文字列へ。
+    // double型の小数点がうざいからint型変換経由で文字列へ。
     int tmp = value.toInt();
     String text = tmp.toString();
-    // switch (value.toInt()) {
-    //   case 0:
-    //     text = 'Mn';
-    //     break;
-    //   case 1:
-    //     text = 'Te';
-    //     break;
-    //   case 2:
-    //     text = 'Wd';
-    //     break;
-    //   case 3:
-    //     text = 'Tu';
-    //     break;
-    //   case 4:
-    //     text = 'Fr';
-    //     break;
-    //   case 5:
-    //     text = 'St';
-    //     break;
-    //   case 6:
-    //     text = 'Sn';
-    //     break;
-    //   default:
-    //     text = '';
-    //     break;
-    // }
     return Center(child: Text(text, style: style));
   }
 
@@ -155,8 +122,6 @@ class RecordBarChart extends ConsumerWidget {
           sideTitles: SideTitles(
             showTitles: true,
             reservedSize: 30,
-            // "関連軸に指定された値を持つタイトルウィジェットを取得する関数です。"
-            // getTitlesWidgetが内部的に繰り返し処理をしているのだろう。と推測
             getTitlesWidget: getTitles,
           ),
         ),
@@ -181,12 +146,11 @@ class RecordBarChart extends ConsumerWidget {
   List<BarChartGroupData> get barGroups => [
         for (int i = 0; i < 12; i++)
           BarChartGroupData(
-            x: int.parse(month_array[i]),
+            x: int.parse(monthArray[i]),
             barRods: [
-              // 各barの表示設定。色や幅とか。他のプロパティも今後、色々試してみる。
               BarChartRodData(
                 // 月の合計時間をそれぞれ表示
-                toY: (total_time_array[i][month_array[i]]!).toDouble(),
+                toY: (_totalTimeArray[i][monthArray[i]]!).toDouble(),
                 color: Colors.lightBlue,
                 //gradient: _barsGradient,
               )
