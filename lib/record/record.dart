@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'record_model.dart';
 
 class Record extends StatelessWidget {
@@ -15,12 +14,12 @@ class Record extends StatelessWidget {
   }
 }
 
-class RecordBody extends ConsumerWidget {
+class RecordBody extends StatelessWidget {
   const RecordBody({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final insRecord = ref.watch(recordProvider.notifier);
+  Widget build(BuildContext context) {
+    final insRecord = RecordNotifier();
 
     return FutureBuilder(
         future: insRecord.getTimeSet(),

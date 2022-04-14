@@ -20,13 +20,42 @@ const List<String> monthArray = [
   '12'
 ];
 
-// Provider
-final recordProvider =
-    StateNotifierProvider<RecordNotifier, String>((ref) => RecordNotifier());
+// // Provider
+// final recordProvider =
+//     StateNotifierProvider<RecordNotifier, String>((ref) => RecordNotifier());
+//
+// class RecordNotifier extends StateNotifier<String> {
+//   RecordNotifier() : super("");
+//
+//   // Firestoreから値取得して、月ごとの合計時間を配列に格納
+//   Future getTimeSet() async {
+//     List<Map<String, int>> _totalTimeArray = [];
+//     final String? userId = FirebaseAuth.instance.currentUser?.uid;
+//     final String year = DateFormat.y().format(DateTime.now());
+//
+//     /// Reference(参照先の指定)
+//     final DocumentReference docRef =
+//         FirebaseFirestore.instance.collection('users').doc(userId);
+//
+//     /// Snapshot:Reference(参照先)の中身の実態。
+//     /// Snapshot(実態)から値を取り出す。
+//     for (var month in monthArray) {
+//       QuerySnapshot docesSnapshot = await docRef.collection(year + month).get();
+//       final List<QueryDocumentSnapshot> docsDayArray = docesSnapshot.docs;
+//
+//       int total = 0;
+//       for (var day in docsDayArray) {
+//         int dayMinute = int.parse(day.get('minute'));
+//         total = total + dayMinute;
+//       }
+//       _totalTimeArray.add({month: total});
+//     }
+//     // FutureBuilderに値返却
+//     return _totalTimeArray;
+//   }
+// }
 
-class RecordNotifier extends StateNotifier<String> {
-  RecordNotifier() : super("");
-
+class RecordNotifier {
   // Firestoreから値取得して、月ごとの合計時間を配列に格納
   Future getTimeSet() async {
     List<Map<String, int>> _totalTimeArray = [];
