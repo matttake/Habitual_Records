@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:habitual_records/home/home.dart';
+import '../home/home.dart';
 import 'login_model.dart';
-import 'new.dart';
 
-class Login extends StatelessWidget {
-  const Login({Key? key}) : super(key: key);
+class New extends StatelessWidget {
+  const New({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("新規登録"),
+      ),
+      body: const NewBody(),
+    );
+  }
+}
+
+class NewBody extends StatelessWidget {
+  const NewBody({Key? key}) : super(key: key);
+  final String successMessage = "ユーザー登録が完了しました！";
+  final String mistakeMessage = "登録に失敗しました";
 
   @override
   Widget build(BuildContext context) {
@@ -38,41 +53,24 @@ class Login extends StatelessWidget {
                   },
                 ),
 
-                Container(
+                SizedBox(
                   width: double.infinity,
-                  // ログインボタン
+                  // ユーザー登録ボタン
                   child: ElevatedButton(
-                    child: Text('ログイン'),
+                    child: const Text('ユーザー登録'),
                     onPressed: () async {
                       try {
-                        // メール/パスワードでログイン
-                        await _loginInstance.login(
+                        // メール/パスワードでユーザー登録
+                        await _loginInstance.register(
                             _emailProvider.state, _passwordProvider.state);
-                        // ログインに成功した場合
-                        await Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) {
-                            return Home();
-                          }),
-                        );
+                        // ユーザー登録に成功した場合
+                        await _loginInstance.dialog(
+                            context, successMessage, Home());
                       } catch (e) {
-                        // ログインに失敗した場合
-                        String msg = "ログインに失敗しました：${e.toString()}";
+                        // ユーザー登録に失敗した場合
+                        String msg = "$mistakeMessage：${e.toString()}";
                         await _loginInstance.dialog(context, msg, _);
                       }
-                    },
-                  ),
-                ),
-                Center(
-                  child: TextButton(
-                    child: const Text('新規登録'),
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => const New()));
-                      // Navigator.of(context).pushReplacement(
-                      //   MaterialPageRoute(builder: (context) {
-                      //     return const New();
-                      //   }),
-                      // );
                     },
                   ),
                 ),

@@ -7,14 +7,14 @@ final emailProvider =
     StateNotifierProvider<LoginNotifier, String>((ref) => LoginNotifier());
 final passwordProvider =
     StateNotifierProvider<LoginNotifier, String>((ref) => LoginNotifier());
-final ins_Provider = Provider((ref) => LoginNotifier());
+final insProvider = Provider((ref) => LoginNotifier());
 
 class LoginNotifier extends StateNotifier<String> {
   LoginNotifier() : super("");
 
   // textfiledの文字列をセット
-  String setStr(String filed_text) {
-    return this.state = filed_text;
+  String setStr(String filedText) {
+    return state = filedText;
   }
 
   // User新規登録
@@ -36,7 +36,7 @@ class LoginNotifier extends StateNotifier<String> {
   }
 
   // ダイアログ
-  Future Dialog(context, message, page) {
+  Future dialog(context, message, page) {
     return showDialog(
       context: context,
       builder: (_) {
@@ -45,7 +45,7 @@ class LoginNotifier extends StateNotifier<String> {
           actions: <Widget>[
             // 登録成功時 => 画面遷移
             if (page != null)
-              FlatButton(
+              TextButton(
                 child: Text("ok"),
                 onPressed: () => Navigator.of(context)
                     .pushReplacement(MaterialPageRoute(builder: (context) {
@@ -55,7 +55,7 @@ class LoginNotifier extends StateNotifier<String> {
 
             // 登録失敗時 => 入力画面に戻る
             if (page == null)
-              FlatButton(
+              TextButton(
                 child: Text("ok"),
                 onPressed: () => Navigator.pop(context),
               ),
