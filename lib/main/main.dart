@@ -11,13 +11,15 @@ void main() async {
   initializeDateFormatting('ja');
   await Firebase.initializeApp();
   runApp(
-    ProviderScope(
+    const ProviderScope(
       child: MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     Firebase.initializeApp(); // new
@@ -26,9 +28,9 @@ class MyApp extends StatelessWidget {
       home: (() {
         // まだAuthを実装していない
         if (FirebaseAuth.instance.currentUser != null) {
-          return Home();
+          return const Home();
         } else {
-          return Login();
+          return const Login();
         }
       })(),
     );

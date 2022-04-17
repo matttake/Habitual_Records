@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../home/home.dart';
+import 'package:habitual_records/setup/setup.dart';
 import 'login_model.dart';
 
 class New extends StatelessWidget {
@@ -64,8 +64,8 @@ class NewBody extends StatelessWidget {
                         await _loginInstance.register(
                             _emailProvider.state, _passwordProvider.state);
                         // ユーザー登録に成功した場合
-                        await _loginInstance.dialog(
-                            context, successMessage, Home());
+                        await _loginInstance.dialog(context, successMessage,
+                            const Setup(newJudge: true));
                       } catch (e) {
                         // ユーザー登録に失敗した場合
                         String msg = "$mistakeMessage：${e.toString()}";
