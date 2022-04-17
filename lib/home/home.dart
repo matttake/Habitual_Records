@@ -13,41 +13,22 @@ class Home extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("習慣化記録"),
+        leading: IconButton(
+            icon: const Icon(Icons.settings),
+            iconSize: 20.0,
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const Setup()));
+            }),
         actions: [
           IconButton(
-            // Screen transition to loginPage
+            icon: const Icon(Icons.bar_chart),
             onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const Record()));
             },
-            icon: const Icon(Icons.bar_chart),
           ),
         ],
-      ),
-      drawerEdgeDragWidth: 0,
-      drawer: SizedBox(
-        width: 200,
-        child: SafeArea(
-          child: Drawer(
-            child: ListView(
-              children: [
-                const SizedBox(
-                    height: 60,
-                    child: DrawerHeader(
-                      child: Text('各種ページ'),
-                    )),
-                ListTile(
-                  title: const Text("設定"),
-                  trailing: const Icon(Icons.settings),
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => const Setup()));
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
       body: Center(
         child: HomeBody(),
