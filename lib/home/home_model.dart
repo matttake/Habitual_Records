@@ -6,7 +6,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // 定数宣言
-final List<String> items = [
+const List<String> items = [
   '10',
   '20',
   '30',
@@ -14,56 +14,56 @@ final List<String> items = [
   '50',
 ];
 final String time = DateFormat.yMMMEd('ja').format(DateTime.now());
-final String register_ok = "登録しました。";
-final String register_ng = "作業時間が選択されていません。";
+const String successMessage = "登録しました。";
+const String mistakeMessage = "作業時間が選択されていません。";
 
 // Provider宣言
-final ins_changeProvider =
+final homeChangeProvider =
     ChangeNotifierProvider<HomeModel>((ref) => HomeModel());
 
 class HomeModel extends ChangeNotifier {
   String? selectedValue;
 
   // textfiledの文字列をセット
-  void setStr(String? filed_text) {
-    selectedValue = filed_text;
+  void setStr(String? filedText) {
+    selectedValue = filedText;
     notifyListeners();
   }
 
   Future<String> add_register() async {
-    String snackbar_msg = '';
+    String _snackbarMessage = '';
 
     // 作業時間が選択されていれば、Firebaseへの登録処理を実施
     if (selectedValue != null) {
       // 日付情報の取得
-      final String year_month = DateFormat('yyyyMM').format(DateTime.now());
+      final String yearMonth = DateFormat('yyyyMM').format(DateTime.now());
       final String day = DateFormat.d().format(DateTime.now());
       // UserID取得
-      final String? user_id = FirebaseAuth.instance.currentUser?.uid;
+      final String? userId = FirebaseAuth.instance.currentUser?.uid;
 
       // Firestoreに登録
       final doc = FirebaseFirestore.instance
           .collection('users')
-          .doc(user_id)
-          .collection(year_month)
+          .doc(userId)
+          .collection(yearMonth)
           .doc(day);
 
       try {
         await doc.set({
           'minute': selectedValue,
         });
-        snackbar_msg = register_ok;
+        _snackbarMessage = successMessage;
       } catch (e) {
         print(e.toString());
-        snackbar_msg = e.toString();
+        _snackbarMessage = e.toString();
       }
     }
 
     // 作業時間が未選択なら処理せずエラー文だけ返す
     else {
-      snackbar_msg = register_ng;
+      _snackbarMessage = mistakeMessage;
     }
-    return snackbar_msg;
+    return _snackbarMessage;
   }
 }
 
