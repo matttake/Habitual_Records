@@ -102,7 +102,7 @@ class HomeModel extends ChangeNotifier {
       try {
         await doc.set({
           day: {'minute': selectedValue}
-        });
+        }, SetOptions(merge: true));
         _snackbarMessage = successMessage;
       } catch (e) {
         print(e.toString());
