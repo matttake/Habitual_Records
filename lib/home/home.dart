@@ -46,7 +46,8 @@ class HomeBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ins = ref.watch(homeChangeProvider);
+    final _homeChangeProvider = ref.watch(homeChangeProvider);
+    final _homeFutureProvider = ref.watch(homeFutureProvider);
 
     return Column(
       children: [
@@ -54,21 +55,34 @@ class HomeBody extends ConsumerWidget {
         Center(
           child: Text(time),
         ),
-        if (ins.selectedValue != null)
-          Center(
-            child: Text(ins.selectedValue!),
-          ),
-
         // element1:DropdownButton
         Center(
-          child: DropDown(ins),
+          child: _homeFutureProvider.when(
+            // FutureProviderのインスタンス範囲が、このdata配下でしか生きない？
+            // data配下を離れると、インスタンス内の変数の値は破棄されるの？
+            loading: () => const CircularProgressIndicator(),
+            error: (err, stack) => Text('Error: $err'),
+            data: (data) {
+              print(data);
+              if (data == 'count') {
+                return DropDown(_homeChangeProvider, '回数を選択', countItems);
+              } else if (data == 'min') {
+                return DropDown(_homeChangeProvider, '時間を選択', minItems);
+              } else if (data == 'flg') {
+                return DropDown(_homeChangeProvider, '実施有無を選択', flgItems);
+              } else {
+                return const Text('Error');
+              }
+            },
+          ),
         ),
 
         // element2:SubmitButton
         TextButton(
           child: const Text("登録"),
           onPressed: () async {
-            _resultMessage = await ins.add_register();
+            await _homeChangeProvider.getSelectedTarget();
+            _resultMessage = await _homeChangeProvider.addRegister();
 
             /// scackbar部分は別関数として切り出したい。ifの乱立は可読性悪い。
             // 登録成功時
@@ -77,6 +91,7 @@ class HomeBody extends ConsumerWidget {
                 backgroundColor: Colors.lightBlueAccent,
                 content: Text(_resultMessage),
               ));
+              _homeChangeProvider.iniStr();
             }
             // 作業時間未選択時
             else if (_resultMessage == mistakeMessage) {
