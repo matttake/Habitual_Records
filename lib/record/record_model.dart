@@ -20,73 +20,49 @@ const List<String> monthArray = [
   '12'
 ];
 
-// // Provider
-// final recordProvider =
-//     StateNotifierProvider<RecordNotifier, String>((ref) => RecordNotifier());
-//
-// class RecordNotifier extends StateNotifier<String> {
-//   RecordNotifier() : super("");
-//
-//   // Firestoreから値取得して、月ごとの合計時間を配列に格納
-//   Future getTimeSet() async {
-//     List<Map<String, int>> _totalTimeArray = [];
-//     final String? userId = FirebaseAuth.instance.currentUser?.uid;
-//     final String year = DateFormat.y().format(DateTime.now());
-//
-//     /// Reference(参照先の指定)
-//     final DocumentReference docRef =
-//         FirebaseFirestore.instance.collection('users').doc(userId);
-//
-//     /// Snapshot:Reference(参照先)の中身の実態。
-//     /// Snapshot(実態)から値を取り出す。
-//     for (var month in monthArray) {
-//       QuerySnapshot docesSnapshot = await docRef.collection(year + month).get();
-//       final List<QueryDocumentSnapshot> docsDayArray = docesSnapshot.docs;
-//
-//       int total = 0;
-//       for (var day in docsDayArray) {
-//         int dayMinute = int.parse(day.get('minute'));
-//         total = total + dayMinute;
-//       }
-//       _totalTimeArray.add({month: total});
-//     }
-//     // FutureBuilderに値返却
-//     return _totalTimeArray;
-//   }
-// }
-
 class RecordNotifier {
+  final String? _userId = FirebaseAuth.instance.currentUser?.uid;
+
+  // Firestoreから選択中の目標を取得
+  Future getSelectedTarget() async {
+    final DocumentSnapshot doc =
+        await FirebaseFirestore.instance.collection('users').doc(_userId).get();
+    String selectedTarget = (doc.data() as Map)['selected target'];
+    return selectedTarget;
+  }
+
   // Firestoreから値取得して、月ごとの合計時間を配列に格納
   Future getTimeSet() async {
     List<Map<String, int>> _totalTimeArray = [];
-    final String? userId = FirebaseAuth.instance.currentUser?.uid;
-    final String year = DateFormat.y().format(DateTime.now());
+    String target = await getSelectedTarget();
+    final String _year = DateFormat.y().format(DateTime.now());
 
-    /// Reference(参照先の指定)
-    final DocumentReference docRef =
-        FirebaseFirestore.instance.collection('users').doc(userId);
+    // Reference(参照先の指定)
+    final CollectionReference collectionRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(_userId)
+        .collection(target);
 
-    /// Snapshot:Reference(参照先)の中身の実態。
-    /// Snapshot(実態)から値を取り出す。
     for (var month in monthArray) {
-      QuerySnapshot docesSnapshot = await docRef.collection(year + month).get();
-      final List<QueryDocumentSnapshot> docsDayArray = docesSnapshot.docs;
+      DocumentSnapshot docesSnapshot =
+          await collectionRef.doc(_year + month).get();
+      var docesMap = docesSnapshot.data();
 
-      int total = 0;
-      for (var day in docsDayArray) {
-        int dayMinute = int.parse(day.get('minute'));
-        total = total + dayMinute;
+      if (docesMap is Map) {
+        int total = 0;
+        for (var value in docesMap.values) {
+          total = total + int.parse(value['minute']);
+        }
+        _totalTimeArray.add({month: total});
+      } else {
+        _totalTimeArray.add({month: 0});
       }
-      _totalTimeArray.add({month: total});
     }
     // FutureBuilderに値返却
     return _totalTimeArray;
   }
 }
 
-/// コンストラクタで'_'をつけると、同ファイルからしか参照できない？
-/// コンストラクタのルールがいまいちわかっていない。。。
-/// とりあえず別ファイルから参照したかったから、'_'無しにした。
 class RecordBarChart extends ConsumerWidget {
   List<Map<String, int>> _totalTimeArray = [];
   RecordBarChart(this._totalTimeArray, {Key? key}) : super(key: key);
