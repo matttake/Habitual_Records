@@ -6,6 +6,12 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // 定数宣言
+const List<String> items = [
+  '作業時間を登録',
+  '実施回数を登録',
+  '実施の有無を登録',
+];
+
 const List<String> minItems = [
   '10',
   '20',
@@ -38,6 +44,8 @@ const List<String> countItems = [
 const List<String> flgItems = [
   '1',
 ];
+
+const List lists = [minItems, countItems, flgItems];
 const Map<String, String> targetItems = {
   '作業時間を登録': 'min',
   '実施回数を登録': 'count',
@@ -52,14 +60,15 @@ const String mistakeMessage = "作業時間が選択されていません。";
 final homeChangeProvider =
     ChangeNotifierProvider<HomeModel>((ref) => HomeModel());
 final homeFutureProvider = FutureProvider<String>((ref) async {
-  return await HomeModel().getSelectedTarget();
+  return await HomeModel().getTargetIndex();
 });
 
 class HomeModel extends ChangeNotifier {
-  String? selectedValue;
-  String? targetType;
-  String? selectedTarget;
   final String? _userId = FirebaseAuth.instance.currentUser?.uid;
+  String? selectedValue;
+  String? selectedTarget;
+  String? selectedType;
+  String? targetType;
 
   // textfiledの文字列をセット
   void setStr(String? filedText) {
@@ -78,8 +87,15 @@ class HomeModel extends ChangeNotifier {
     final DocumentSnapshot doc =
         await FirebaseFirestore.instance.collection('users').doc(_userId).get();
     selectedTarget = (doc.data() as Map)['selected target'];
-    targetType = targetItems[(doc.data() as Map)['type']];
-    return targetType;
+    selectedType = (doc.data() as Map)['type'];
+    targetType = targetItems[selectedType];
+    return;
+  }
+
+  Future<String> getTargetIndex() async {
+    await getSelectedTarget();
+    String _indexNum = items.indexOf(selectedType!).toString();
+    return _indexNum;
   }
 
   Future<String> addRegister() async {
