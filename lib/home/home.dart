@@ -41,17 +41,14 @@ class Home extends StatelessWidget {
 class HomeBody extends ConsumerWidget {
   HomeBody({Key? key}) : super(key: key);
 
-  // 変数宣言
-  String _resultMessage = '';
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final _homeChangeProvider = ref.watch(homeChangeProvider);
     final _homeFutureProvider = ref.watch(homeFutureProvider);
-
     return _homeFutureProvider.when(
         // FutureProviderのインスタンス範囲が、このdata配下でしか生きない？
         // data配下を離れると、インスタンス内の変数の値は破棄されるの？
+        // インスタンス変数のスコープではなくなるからそらそうか、、
         loading: () => const CircularProgressIndicator(),
         error: (err, stack) => Text('Error: $err'),
         data: (_indexNum) {
@@ -63,12 +60,34 @@ class HomeBody extends ConsumerWidget {
               Center(
                 child: DropDown(_homeChangeProvider, _hintText, _targetItems),
               ),
-              // element2:SubmitButton
               TextButton(
                 child: const Text("登録"),
                 onPressed: () async {
-                  await _homeChangeProvider.getSelectedTarget();
-                  _resultMessage = await _homeChangeProvider.addRegister();
+                  String _resultMessage = '';
+                  bool _overwriteJudgment = true;
+                  bool _checkResult = false;
+
+                  // ドロップダウンの値が選択されているなら、Firestoreに本日の値が既に登録済みかを確認。
+                  if (_homeChangeProvider.selectedValue != null) {
+                    _checkResult = await _homeChangeProvider.checkRegistered();
+                  } else {
+                    _resultMessage = mistakeMessage;
+                    _overwriteJudgment = false;
+                  }
+
+                  // 既に登録済みならダイアログ表示
+                  if (_checkResult == true) {
+                    _overwriteJudgment = await dialog(context);
+                  }
+
+                  // REVIEW: なぜかprintが2重呼び出しされてる。要確認。
+                  // print('bool: ' + _overwriteJudgment.toString());
+                  // print('Message: ' + _resultMessage);
+
+                  // 既存登録アイテム無し or 上書きOKなら、登録処理実行
+                  if (_overwriteJudgment == true) {
+                    _resultMessage = await _homeChangeProvider.addRegister();
+                  }
 
                   /// scackbar部分は別関数として切り出したい。ifの乱立は可読性悪い。
                   // 登録成功時
@@ -85,17 +104,15 @@ class HomeBody extends ConsumerWidget {
                       backgroundColor: Colors.red,
                       content: Text(_resultMessage),
                     ));
-                  }
-                  // 二重登録時
-                  /// ダイアログ出して、（上書きしますか？)を表示したい
-                  // if (_resultMessage == register_ng) {
-                  //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  //     backgroundColor: Colors.red,
-                  //     content: Text(_resultMessage),
-                  //   ));
-                  // }
-                  // firebase側のエラー時
-                  else {
+                    // 上書きNGにした場合
+                  } else if (_resultMessage == '') {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      backgroundColor: Colors.lightGreen,
+                      content: Text('登録はキャンセルされました'),
+                    ));
+                    _homeChangeProvider.iniStr();
+                    // FireStore側のエラーの場合
+                  } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       backgroundColor: Colors.amberAccent,
                       content: Text(_resultMessage),

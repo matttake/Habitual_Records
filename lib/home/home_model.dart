@@ -64,7 +64,12 @@ final homeFutureProvider = FutureProvider<String>((ref) async {
 });
 
 class HomeModel extends ChangeNotifier {
+  // UserID取得
   final String? _userId = FirebaseAuth.instance.currentUser?.uid;
+  // 日付情報の取得
+  final String _yearMonth = DateFormat('yyyyMM').format(DateTime.now());
+  final String _day = DateFormat.d().format(DateTime.now());
+
   String? selectedValue;
   String? selectedTarget;
   String? selectedType;
@@ -98,37 +103,49 @@ class HomeModel extends ChangeNotifier {
     return _indexNum;
   }
 
+  Future<bool> checkRegistered() async {
+    bool _result;
+    await getSelectedTarget();
+    try {
+      DocumentSnapshot docesSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_userId)
+          .collection(selectedTarget!)
+          .doc(_yearMonth)
+          .get();
+      var filedItems = docesSnapshot.data();
+
+      if (filedItems is Map) {
+        _result = filedItems.containsKey(_day);
+        print(_result);
+      } else {
+        _result = false;
+      }
+    } catch (e) {
+      print(e.toString());
+      _result = false;
+    }
+    return _result;
+  }
+
   Future<String> addRegister() async {
     String _snackbarMessage = '';
-    // 作業時間が選択されていれば、Firebaseへの登録処理を実施
-    if (selectedValue != null) {
-      // 日付情報の取得
-      final String yearMonth = DateFormat('yyyyMM').format(DateTime.now());
-      final String day = DateFormat.d().format(DateTime.now());
-      // UserID取得
-
+    try {
       // Firestoreに登録
       final doc = FirebaseFirestore.instance
           .collection('users')
           .doc(_userId)
           // .collection(yearMonth)
           .collection(selectedTarget!)
-          .doc(yearMonth);
+          .doc(_yearMonth);
 
-      try {
-        await doc.set({
-          day: {'minute': selectedValue}
-        }, SetOptions(merge: true));
-        _snackbarMessage = successMessage;
-      } catch (e) {
-        print(e.toString());
-        _snackbarMessage = e.toString();
-      }
-    }
-
-    // 作業時間が未選択なら処理せずエラー文だけ返す
-    else {
-      _snackbarMessage = mistakeMessage;
+      await doc.set({
+        _day: {'minute': selectedValue}
+      }, SetOptions(merge: true));
+      _snackbarMessage = successMessage;
+    } catch (e) {
+      print(e.toString());
+      _snackbarMessage = e.toString();
     }
     return _snackbarMessage;
   }
@@ -185,4 +202,27 @@ class DropDown extends StatelessWidget {
       ),
     );
   }
+}
+
+Future dialog(context) {
+  return showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (BuildContext context) {
+      return WillPopScope(
+          // 戻るボタンを無効にする
+          onWillPop: () async => false,
+          child: AlertDialog(
+            title: const Text('既に本日の登録は完了してますが、上書きしますか？'),
+            actions: <Widget>[
+              TextButton(
+                  child: const Text("上書き登録する"),
+                  onPressed: () => Navigator.of(context).pop(true)),
+              TextButton(
+                  child: const Text("登録しない"),
+                  onPressed: () => Navigator.of(context).pop(false)),
+            ],
+          ));
+    },
+  );
 }
