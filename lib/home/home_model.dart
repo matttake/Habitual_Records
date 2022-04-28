@@ -6,6 +6,54 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // 定数宣言
+const List<String> constMonth = [
+  '01',
+  '02',
+  '03',
+  '04',
+  '05',
+  '06',
+  '07',
+  '08',
+  '09',
+  '10',
+  '11',
+  '12',
+];
+const List<String> constDays = [
+  '1',
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
+  '9',
+  '10',
+  '11',
+  '12',
+  '13',
+  '14',
+  '15',
+  '16',
+  '17',
+  '18',
+  '19',
+  '20',
+  '21',
+  '22',
+  '23',
+  '24',
+  '25',
+  '26',
+  '27',
+  '28',
+  '29',
+  '30',
+  '31',
+];
+
 const List<String> items = [
   '作業時間を登録',
   '実施回数を登録',
@@ -51,7 +99,10 @@ const Map<String, String> targetItems = {
   '実施回数を登録': 'count',
   '実施の有無を登録': 'flg'
 };
-
+final String year = DateFormat('yyyy').format(DateTime.now());
+final String yearMonth = DateFormat('yyyyMM').format(DateTime.now());
+final String month = DateFormat('MM').format(DateTime.now());
+final String day = DateFormat.d().format(DateTime.now());
 final String time = DateFormat.yMMMEd('ja').format(DateTime.now());
 const String successMessage = "登録しました。";
 const String mistakeMessage = "作業時間が選択されていません。";
@@ -67,9 +118,9 @@ class HomeModel extends ChangeNotifier {
   // UserID取得
   final String? _userId = FirebaseAuth.instance.currentUser?.uid;
   // 日付情報の取得
-  final String _yearMonth = DateFormat('yyyyMM').format(DateTime.now());
-  final String _day = DateFormat.d().format(DateTime.now());
 
+  String? selectedMonth;
+  String? selectedDay;
   String? selectedValue;
   String? selectedTarget;
   String? selectedType;
@@ -81,9 +132,21 @@ class HomeModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setDay(String? filedText) {
+    selectedDay = filedText;
+    notifyListeners();
+  }
+
+  void setMonth(String? filedText) {
+    selectedMonth = filedText;
+    notifyListeners();
+  }
+
   // textfiledの初期化
   void iniStr() {
     selectedValue = null;
+    selectedDay = null;
+    selectedMonth = null;
     notifyListeners();
   }
 
@@ -105,18 +168,28 @@ class HomeModel extends ChangeNotifier {
 
   Future<bool> checkRegistered() async {
     bool _result;
+    String _checkDay = day;
+    String _checkMonth = month;
+
+    if (selectedMonth != null) {
+      _checkMonth = selectedMonth!;
+    }
+    if (selectedDay != null) {
+      _checkDay = selectedDay!;
+    }
+
     await getSelectedTarget();
     try {
       DocumentSnapshot docesSnapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(_userId)
           .collection(selectedTarget!)
-          .doc(_yearMonth)
+          .doc(year + _checkMonth)
           .get();
       var filedItems = docesSnapshot.data();
 
       if (filedItems is Map) {
-        _result = filedItems.containsKey(_day);
+        _result = filedItems.containsKey(_checkDay);
         print(_result);
       } else {
         _result = false;
@@ -129,18 +202,22 @@ class HomeModel extends ChangeNotifier {
   }
 
   Future<String> addRegister() async {
+    selectedDay ??= DateFormat.d().format(DateTime.now());
+    selectedMonth ??= DateFormat("MM").format(DateTime.now());
+    print(selectedDay);
+    print(selectedMonth);
+
     String _snackbarMessage = '';
     try {
       // Firestoreに登録
       final doc = FirebaseFirestore.instance
           .collection('users')
           .doc(_userId)
-          // .collection(yearMonth)
           .collection(selectedTarget!)
-          .doc(_yearMonth);
+          .doc(year + selectedMonth!);
 
       await doc.set({
-        _day: {'minute': selectedValue}
+        selectedDay!: {'minute': selectedValue}
       }, SetOptions(merge: true));
       _snackbarMessage = successMessage;
     } catch (e) {
@@ -182,11 +259,25 @@ class DropDown extends StatelessWidget {
                 ))
             .toList(),
         // ↓itemsのリストにない値だとエラーになる。空文字も。初期化したらだめ。初期値はnull？
-        value: ins.selectedValue,
+        value: (() {
+          if (targetItems == constDays) {
+            return ins.selectedDay;
+          } else if (targetItems == constMonth) {
+            return ins.selectedMonth;
+          } else {
+            return ins.selectedValue;
+          }
+        })(),
         // ライブラリの指定の型をよく見る。ライブラリに合わして変数宣言等しないとうまくいかない。
-        onChanged: (String? input) {
-          ins.setStr(input);
-        },
+        onChanged: ((String? input) {
+          if (targetItems == constDays) {
+            ins.setDay(input);
+          } else if (targetItems == constMonth) {
+            ins.setMonth(input);
+          } else {
+            ins.setStr(input);
+          }
+        }),
         buttonHeight: 40,
         buttonWidth: 140,
         itemHeight: 40,

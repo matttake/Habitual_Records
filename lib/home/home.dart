@@ -39,7 +39,7 @@ class Home extends StatelessWidget {
 
 // Body部分
 class HomeBody extends ConsumerWidget {
-  HomeBody({Key? key}) : super(key: key);
+  const HomeBody({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -57,6 +57,15 @@ class HomeBody extends ConsumerWidget {
 
           return Column(
             children: [
+              Center(
+                child: Wrap(
+                  direction: Axis.horizontal,
+                  children: <Widget>[
+                    DropDown(_homeChangeProvider, month, constMonth),
+                    DropDown(_homeChangeProvider, day, constDays),
+                  ],
+                ),
+              ),
               Center(
                 child: DropDown(_homeChangeProvider, _hintText, _targetItems),
               ),
