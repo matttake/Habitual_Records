@@ -27,7 +27,7 @@ class RecordNotifier {
   Future getSelectedTarget() async {
     final DocumentSnapshot doc =
         await FirebaseFirestore.instance.collection('users').doc(_userId).get();
-    String selectedTarget = (doc.data() as Map)['selected target'];
+    String selectedTarget = (doc.data() as Map)['target'];
     return selectedTarget;
   }
 
