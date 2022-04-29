@@ -52,8 +52,8 @@ class HomeBody extends ConsumerWidget {
         loading: () => const CircularProgressIndicator(),
         error: (err, stack) => Text('Error: $err'),
         data: (_indexNum) {
-          String _hintText = items[int.parse(_indexNum)];
-          List<String> _targetItems = lists[int.parse(_indexNum)];
+          String _hintText = constTargetType[int.parse(_indexNum)];
+          List<String> _targetItems = constTargetItems[int.parse(_indexNum)];
 
           return Column(
             children: [
@@ -61,7 +61,7 @@ class HomeBody extends ConsumerWidget {
                 child: Wrap(
                   direction: Axis.horizontal,
                   children: <Widget>[
-                    DropDown(_homeChangeProvider, month, constMonth),
+                    DropDown(_homeChangeProvider, month, constMonths),
                     DropDown(_homeChangeProvider, day, constDays),
                   ],
                 ),
@@ -77,7 +77,7 @@ class HomeBody extends ConsumerWidget {
                   bool _checkResult = false;
 
                   // ドロップダウンの値が選択されているなら、Firestoreに本日の値が既に登録済みかを確認。
-                  if (_homeChangeProvider.selectedValue != null) {
+                  if (_homeChangeProvider.dropdownSelectedValue != null) {
                     _checkResult = await _homeChangeProvider.checkRegistered();
                   } else {
                     _resultMessage = mistakeMessage;

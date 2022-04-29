@@ -6,7 +6,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // 定数宣言
-const List<String> constMonth = [
+const List<String> constMonths = [
   '01',
   '02',
   '03',
@@ -54,13 +54,13 @@ const List<String> constDays = [
   '31',
 ];
 
-const List<String> items = [
+const List<String> constTargetType = [
   '作業時間を登録',
   '実施回数を登録',
   '実施の有無を登録',
 ];
 
-const List<String> minItems = [
+const List<String> constDropdownMinute = [
   '10',
   '20',
   '30',
@@ -72,7 +72,7 @@ const List<String> minItems = [
   '90',
   '100',
 ];
-const List<String> countItems = [
+const List<String> countDropdownCount = [
   '1',
   '2',
   '3',
@@ -89,23 +89,23 @@ const List<String> countItems = [
   '14',
   '15',
 ];
-const List<String> flgItems = [
+const List<String> constDropdownFlags = [
   '1',
 ];
 
-const List lists = [minItems, countItems, flgItems];
-const Map<String, String> targetItems = {
-  '作業時間を登録': 'min',
-  '実施回数を登録': 'count',
-  '実施の有無を登録': 'flg'
-};
+const List constTargetItems = [
+  constDropdownMinute,
+  countDropdownCount,
+  constDropdownFlags
+];
+
+const String successMessage = "登録しました。";
+const String mistakeMessage = "作業時間が選択されていません。";
+
 final String year = DateFormat('yyyy').format(DateTime.now());
 final String yearMonth = DateFormat('yyyyMM').format(DateTime.now());
 final String month = DateFormat('MM').format(DateTime.now());
 final String day = DateFormat.d().format(DateTime.now());
-final String time = DateFormat.yMMMEd('ja').format(DateTime.now());
-const String successMessage = "登録しました。";
-const String mistakeMessage = "作業時間が選択されていません。";
 
 // Provider宣言
 final homeChangeProvider =
@@ -117,80 +117,73 @@ final homeFutureProvider = FutureProvider<String>((ref) async {
 class HomeModel extends ChangeNotifier {
   // UserID取得
   final String? _userId = FirebaseAuth.instance.currentUser?.uid;
-  // 日付情報の取得
 
-  String? selectedMonth;
-  String? selectedDay;
-  String? selectedValue;
-  String? selectedTarget;
-  String? selectedType;
+  String? dropdownSelectedMonth;
+  String? dropdownSelectedDay;
+  String? dropdownSelectedValue;
+  String? targetName;
   String? targetType;
 
-  // textfiledの文字列をセット
-  void setStr(String? filedText) {
-    selectedValue = filedText;
+  // dropdownの文字列をセット
+  void setValue(String? dropdownText) {
+    dropdownSelectedValue = dropdownText;
     notifyListeners();
   }
 
-  void setDay(String? filedText) {
-    selectedDay = filedText;
+  void setDay(String? dropdownText) {
+    dropdownSelectedDay = dropdownText;
     notifyListeners();
   }
 
-  void setMonth(String? filedText) {
-    selectedMonth = filedText;
+  void setMonth(String? dropdownText) {
+    dropdownSelectedMonth = dropdownText;
     notifyListeners();
   }
 
-  // textfiledの初期化
+  // dropdownの初期化
   void iniStr() {
-    selectedValue = null;
-    selectedDay = null;
-    selectedMonth = null;
+    dropdownSelectedValue = null;
+    dropdownSelectedDay = null;
+    dropdownSelectedMonth = null;
     notifyListeners();
   }
 
+  // Firestoreから選択中の目標と目標タイプを取得
   Future getSelectedTarget() async {
-    // Firestoreから選択中の目標を取得
     final DocumentSnapshot doc =
         await FirebaseFirestore.instance.collection('users').doc(_userId).get();
-    selectedTarget = (doc.data() as Map)['selected target'];
-    selectedType = (doc.data() as Map)['type'];
-    targetType = targetItems[selectedType];
+    targetName = (doc.data() as Map)['target'];
+    targetType = (doc.data() as Map)['type'];
     return;
   }
 
+  // 定数の目標タイプリストのindexを取得
   Future<String> getTargetIndex() async {
     await getSelectedTarget();
-    String _indexNum = items.indexOf(selectedType!).toString();
+    String _indexNum = constTargetType.indexOf(targetType!).toString();
     return _indexNum;
   }
 
+  // 登録する値が既に登録されているかどうかかのチェック
   Future<bool> checkRegistered() async {
     bool _result;
-    String _checkDay = day;
-    String _checkMonth = month;
-
-    if (selectedMonth != null) {
-      _checkMonth = selectedMonth!;
-    }
-    if (selectedDay != null) {
-      _checkDay = selectedDay!;
-    }
+    // 日時のドロップダウンメニュが選択されていないなら、今日の日付を入れる
+    dropdownSelectedDay ??= day;
+    dropdownSelectedMonth ??= month;
 
     await getSelectedTarget();
     try {
       DocumentSnapshot docesSnapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(_userId)
-          .collection(selectedTarget!)
-          .doc(year + _checkMonth)
+          .collection(targetName!)
+          .doc(year + dropdownSelectedMonth!)
           .get();
-      var filedItems = docesSnapshot.data();
+      var _filedItems = docesSnapshot.data();
 
-      if (filedItems is Map) {
-        _result = filedItems.containsKey(_checkDay);
-        print(_result);
+      // 値の存在判定をboolで返す
+      if (_filedItems is Map) {
+        _result = _filedItems.containsKey(dropdownSelectedDay);
       } else {
         _result = false;
       }
@@ -201,23 +194,23 @@ class HomeModel extends ChangeNotifier {
     return _result;
   }
 
+  // Firestoreへ値登録
   Future<String> addRegister() async {
-    selectedDay ??= DateFormat.d().format(DateTime.now());
-    selectedMonth ??= DateFormat("MM").format(DateTime.now());
-    print(selectedDay);
-    print(selectedMonth);
-
     String _snackbarMessage = '';
+    // 日時のドロップダウンメニュが選択されていないなら、今日の日付を入れる
+    dropdownSelectedDay ??= day;
+    dropdownSelectedMonth ??= month;
+
     try {
       // Firestoreに登録
       final doc = FirebaseFirestore.instance
           .collection('users')
           .doc(_userId)
-          .collection(selectedTarget!)
-          .doc(year + selectedMonth!);
+          .collection(targetName!)
+          .doc(year + dropdownSelectedMonth!);
 
       await doc.set({
-        selectedDay!: {'minute': selectedValue}
+        dropdownSelectedDay!: {'minute': dropdownSelectedValue}
       }, SetOptions(merge: true));
       _snackbarMessage = successMessage;
     } catch (e) {
@@ -229,7 +222,7 @@ class HomeModel extends ChangeNotifier {
 }
 
 class DropDown extends StatelessWidget {
-  DropDown(this.ins, this.hintText, this.targetItems, {Key? key})
+  const DropDown(this.ins, this.hintText, this.targetItems, {Key? key})
       : super(key: key);
   final HomeModel ins;
   final String hintText;
@@ -261,21 +254,21 @@ class DropDown extends StatelessWidget {
         // ↓itemsのリストにない値だとエラーになる。空文字も。初期化したらだめ。初期値はnull？
         value: (() {
           if (targetItems == constDays) {
-            return ins.selectedDay;
-          } else if (targetItems == constMonth) {
-            return ins.selectedMonth;
+            return ins.dropdownSelectedDay;
+          } else if (targetItems == constMonths) {
+            return ins.dropdownSelectedMonth;
           } else {
-            return ins.selectedValue;
+            return ins.dropdownSelectedValue;
           }
         })(),
         // ライブラリの指定の型をよく見る。ライブラリに合わして変数宣言等しないとうまくいかない。
         onChanged: ((String? input) {
           if (targetItems == constDays) {
             ins.setDay(input);
-          } else if (targetItems == constMonth) {
+          } else if (targetItems == constMonths) {
             ins.setMonth(input);
           } else {
-            ins.setStr(input);
+            ins.setValue(input);
           }
         }),
         buttonHeight: 40,
@@ -304,7 +297,7 @@ Future dialog(context) {
           // 戻るボタンを無効にする
           onWillPop: () async => false,
           child: AlertDialog(
-            title: const Text('既に本日の登録は完了してますが、上書きしますか？'),
+            title: const Text('選択された日付には既に記録が登録されていますが、上書きしますか？'),
             actions: <Widget>[
               TextButton(
                   child: const Text("上書き登録する"),

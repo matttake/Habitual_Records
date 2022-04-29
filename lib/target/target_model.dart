@@ -46,7 +46,7 @@ class TargetNotifier extends StateNotifier<String> {
       try {
         await doc.set({
           'type': type,
-          'selected target': state,
+          'target': state,
         });
         _resultMessage = _successMessage;
       } catch (e) {
