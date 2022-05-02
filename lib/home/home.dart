@@ -24,8 +24,10 @@ class Home extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.bar_chart),
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const Record()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const Record(text: '月毎の記録')));
             },
           ),
         ],
