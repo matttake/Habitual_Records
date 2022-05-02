@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:intl/intl.dart';
 
 const List<String> monthArray = [
   '01',
@@ -20,37 +20,29 @@ const List<String> monthArray = [
   '12'
 ];
 
-class RecordNotifier {
+class RecordModel {
   final String? _userId = FirebaseAuth.instance.currentUser?.uid;
-
-  // Firestoreから選択中の目標を取得
-  Future getSelectedTarget() async {
-    final DocumentSnapshot doc =
-        await FirebaseFirestore.instance.collection('users').doc(_userId).get();
-    String selectedTarget = (doc.data() as Map)['target'];
-    return selectedTarget;
-  }
 
   // Firestoreから値取得して、月ごとの合計時間を配列に格納
   Future getTimeSet() async {
     List<Map<String, int>> _totalTimeArray = [];
-    String target = await getSelectedTarget();
+    String _target = await getSelectedTarget(_userId);
     final String _year = DateFormat.y().format(DateTime.now());
 
     // Reference(参照先の指定)
     final CollectionReference collectionRef = FirebaseFirestore.instance
         .collection('users')
         .doc(_userId)
-        .collection(target);
+        .collection(_target);
 
     for (var month in monthArray) {
       DocumentSnapshot docesSnapshot =
           await collectionRef.doc(_year + month).get();
-      var docesMap = docesSnapshot.data();
+      var docsMap = docesSnapshot.data();
 
-      if (docesMap is Map) {
+      if (docsMap is Map) {
         int total = 0;
-        for (var value in docesMap.values) {
+        for (var value in docsMap.values) {
           total = total + int.parse(value['minute']);
         }
         _totalTimeArray.add({month: total});
@@ -63,9 +55,53 @@ class RecordNotifier {
   }
 }
 
+class RecordTotalModel {
+  final String? _userId = FirebaseAuth.instance.currentUser?.uid;
+
+  // Firestoreから値取得して、累計時間を配列に格納
+  Future getTimeSet() async {
+    List<Map<String, int>> _totalTimeArray = [];
+    String _target = await getSelectedTarget(_userId);
+    int _total = 0;
+
+    final String _year = DateFormat.y().format(DateTime.now());
+
+    // Reference(参照先の指定)
+    final CollectionReference collectionRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(_userId)
+        .collection(_target);
+
+    for (var month in monthArray) {
+      DocumentSnapshot docsSnapshot =
+          await collectionRef.doc(_year + month).get();
+      var docsMap = docsSnapshot.data();
+
+      if (docsMap is Map) {
+        for (var value in docsMap.values) {
+          _total = _total + int.parse(value['minute']);
+        }
+        _totalTimeArray.add({month: _total});
+      } else {
+        _totalTimeArray.add({month: 0});
+      }
+    }
+    // FutureBuilderに値返却
+    return _totalTimeArray;
+  }
+}
+
+// Firestoreから選択中の目標を取得
+Future getSelectedTarget(String? userId) async {
+  final DocumentSnapshot doc =
+      await FirebaseFirestore.instance.collection('users').doc(userId).get();
+  String selectedTarget = (doc.data() as Map)['target'];
+  return selectedTarget;
+}
+
 class RecordBarChart extends ConsumerWidget {
-  List<Map<String, int>> _totalTimeArray = [];
   RecordBarChart(this._totalTimeArray, {Key? key}) : super(key: key);
+  List<Map<String, int>> _totalTimeArray = [];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -77,6 +113,7 @@ class RecordBarChart extends ConsumerWidget {
         barGroups: barGroups, // ④各barの表示設定。色や幅とか。
         gridData: FlGridData(show: false), // ⑤背景のグリッド表示設定
         alignment: BarChartAlignment.spaceAround, // ⑥barの表示起点の設定
+        // todo:↓即時関数使って動的にbarの高さのMax変更したい。
         maxY: 300,
       ),
     );
