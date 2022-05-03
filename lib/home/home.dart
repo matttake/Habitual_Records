@@ -62,8 +62,22 @@ class HomeBody extends ConsumerWidget {
                 child: Wrap(
                   direction: Axis.horizontal,
                   children: <Widget>[
-                    DropDown(_homeChangeProvider, month, constMonths),
-                    DropDown(_homeChangeProvider, day, constDays),
+                    DropDown(_homeChangeProvider, month, constMonths,
+                        buttonWidth: 45.0),
+                    Container(
+                      alignment: Alignment.center,
+                      height: 40,
+                      width: 30,
+                      child: const Text('月'),
+                    ),
+                    DropDown(_homeChangeProvider, day, constDays,
+                        buttonWidth: 45.0),
+                    Container(
+                      alignment: Alignment.center,
+                      height: 40,
+                      width: 30,
+                      child: const Text('日'),
+                    ),
                   ],
                 ),
               ),
@@ -81,9 +95,9 @@ class HomeBody extends ConsumerWidget {
                     ElevatedButton(
                       child: const Text("登録"),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.blue,
-                        onPrimary: Colors.white,
-                      ),
+                          primary: Colors.blue,
+                          onPrimary: Colors.white,
+                          minimumSize: const Size(155, 40)),
                       onPressed: () async {
                         String _resultMessage = '';
                         bool _overwriteJudgment = true;

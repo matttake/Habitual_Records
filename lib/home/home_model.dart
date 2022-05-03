@@ -222,14 +222,18 @@ class HomeModel extends ChangeNotifier {
 }
 
 class DropDown extends StatelessWidget {
-  const DropDown(this.ins, this.hintText, this.targetItems, {Key? key})
+  DropDown(this.ins, this.hintText, this.targetItems,
+      {this.buttonWidth, Key? key})
       : super(key: key);
   final HomeModel ins;
   final String hintText;
   final List<String> targetItems;
+  double? buttonWidth;
 
   @override
   Widget build(BuildContext context) {
+    buttonWidth ??= 150;
+
     return Container(
       padding: const EdgeInsets.only(left: 7),
       decoration: BoxDecoration(
@@ -279,7 +283,7 @@ class DropDown extends StatelessWidget {
           }),
 
           buttonHeight: 40,
-          buttonWidth: 140,
+          buttonWidth: buttonWidth,
           itemHeight: 40,
           dropdownMaxHeight: 200,
           dropdownWidth: 100,
