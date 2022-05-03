@@ -28,10 +28,15 @@ class NewSetup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      const Text("目標を設定して今すぐ始めよう！"),
+      Container(
+          margin: const EdgeInsets.only(bottom: 40),
+          child: const Text("目標を設定して今すぐ始めよう！")),
       Center(
         child: TextButton(
-          child: const Text('目標を設定する'),
+          child: const Text(
+            '目標を設定する',
+            style: TextStyle(fontSize: 17),
+          ),
           onPressed: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const Target()));
@@ -62,7 +67,9 @@ class SetupBody extends StatelessWidget {
           // 通信が失敗した場合
           if (snapshot.hasError) {
             return Column(children: [
-              Text(snapshot.error.toString()),
+              Container(
+                  padding: const EdgeInsets.fromLTRB(5, 15, 5, 25),
+                  child: Text(snapshot.error.toString())),
               Center(
                 child: TextButton(
                   child: const Text('ログアウト'),
@@ -70,7 +77,7 @@ class SetupBody extends StatelessWidget {
                     await FirebaseAuth.instance.signOut();
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(builder: (context) {
-                        return MyApp();
+                        return const MyApp();
                       }),
                     );
                   },
@@ -82,20 +89,31 @@ class SetupBody extends StatelessWidget {
           // snapshot.dataがnull以外の場合
           if (snapshot.hasData) {
             return Column(children: [
-              const Text("目標"),
-              Text(snapshot.data),
-              Center(
-                child: TextButton(
-                  child: const Text('ログアウト'),
-                  onPressed: () async {
-                    await FirebaseAuth.instance.signOut();
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) {
-                        return MyApp();
-                      }),
-                    );
-                  },
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    child: const Text('ログアウト'),
+                    style: TextButton.styleFrom(
+                        textStyle: const TextStyle(fontSize: 10)),
+                    onPressed: () async {
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) {
+                          return const MyApp();
+                        }),
+                      );
+                    },
+                  ),
+                ],
+              ),
+              Container(
+                  margin: const EdgeInsets.only(bottom: 20),
+                  child: const Center(child: Text("【目標】"))),
+              Text(
+                snapshot.data,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ]);
           }

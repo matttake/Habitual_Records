@@ -222,67 +222,79 @@ class HomeModel extends ChangeNotifier {
 }
 
 class DropDown extends StatelessWidget {
-  const DropDown(this.ins, this.hintText, this.targetItems, {Key? key})
+  DropDown(this.ins, this.hintText, this.targetItems,
+      {this.buttonWidth, Key? key})
       : super(key: key);
   final HomeModel ins;
   final String hintText;
   final List<String> targetItems;
+  double? buttonWidth;
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonHideUnderline(
-      child: DropdownButton2(
-        hint: Text(
-          hintText,
-          style: TextStyle(
-            fontSize: 14,
-            color: Theme.of(context).hintColor,
+    buttonWidth ??= 150;
+
+    return Container(
+      padding: const EdgeInsets.only(left: 7),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton2(
+          hint: Text(
+            hintText,
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).hintColor,
+            ),
           ),
-        ),
-        isExpanded: true,
-        items: targetItems
-            .map((item) => DropdownMenuItem<String>(
-                  value: item,
-                  child: Text(
-                    item,
-                    style: const TextStyle(
-                      fontSize: 14,
+          isExpanded: true,
+          items: targetItems
+              .map((item) => DropdownMenuItem<String>(
+                    value: item,
+                    child: Text(
+                      item,
+                      style: const TextStyle(
+                        fontSize: 14,
+                      ),
                     ),
-                  ),
-                ))
-            .toList(),
-        // ↓itemsのリストにない値だとエラーになる。空文字も。初期化したらだめ。初期値はnull？
-        value: (() {
-          if (targetItems == constDays) {
-            return ins.dropdownSelectedDay;
-          } else if (targetItems == constMonths) {
-            return ins.dropdownSelectedMonth;
-          } else {
-            return ins.dropdownSelectedValue;
-          }
-        })(),
-        // ライブラリの指定の型をよく見る。ライブラリに合わして変数宣言等しないとうまくいかない。
-        onChanged: ((String? input) {
-          if (targetItems == constDays) {
-            ins.setDay(input);
-          } else if (targetItems == constMonths) {
-            ins.setMonth(input);
-          } else {
-            ins.setValue(input);
-          }
-        }),
-        buttonHeight: 40,
-        buttonWidth: 140,
-        itemHeight: 40,
-        dropdownMaxHeight: 200,
-        dropdownWidth: 100,
-        //dropdownPadding: const EdgeInsets.symmetric(vertical: 33),
-        dropdownPadding: null,
-        dropdownElevation: 8,
-        scrollbarRadius: const Radius.circular(40),
-        scrollbarThickness: 6,
-        scrollbarAlwaysShow: true,
-        //offset: const Offset(-20, 0),
+                  ))
+              .toList(),
+          // ↓itemsのリストにない値だとエラーになる。空文字も。初期化したらだめ。初期値はnull？
+          value: (() {
+            if (targetItems == constDays) {
+              return ins.dropdownSelectedDay;
+            } else if (targetItems == constMonths) {
+              return ins.dropdownSelectedMonth;
+            } else {
+              return ins.dropdownSelectedValue;
+            }
+          })(),
+          // ライブラリの指定の型をよく見る。ライブラリに合わして変数宣言等しないとうまくいかない。
+          onChanged: ((String? input) {
+            if (targetItems == constDays) {
+              ins.setDay(input);
+            } else if (targetItems == constMonths) {
+              ins.setMonth(input);
+            } else {
+              ins.setValue(input);
+            }
+          }),
+
+          buttonHeight: 40,
+          buttonWidth: buttonWidth,
+          itemHeight: 40,
+          dropdownMaxHeight: 200,
+          dropdownWidth: 100,
+          //dropdownPadding: const EdgeInsets.symmetric(vertical: 33),
+          dropdownPadding: null,
+          dropdownElevation: 8,
+          scrollbarRadius: const Radius.circular(40),
+          scrollbarThickness: 6,
+          scrollbarAlwaysShow: true,
+          //offset: const Offset(-20, 0),
+        ),
       ),
     );
   }
