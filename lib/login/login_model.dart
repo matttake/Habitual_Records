@@ -36,7 +36,7 @@ Future login(String email, String password) async {
 }
 
 // ダイアログ
-Future dialog(context, message, page) {
+Future dialog(context, message) {
   return showDialog(
     barrierDismissible: false,
     context: context,
@@ -47,23 +47,10 @@ Future dialog(context, message, page) {
         child: AlertDialog(
           title: Text(message),
           actions: <Widget>[
-            // 登録成功時 => 画面遷移
-            if (page != null)
-              TextButton(
-                child: const Text("ok"),
-                onPressed: () => Navigator.of(context)
-                    .pushReplacement(MaterialPageRoute(builder: (context) {
-                  return page;
-                })),
-              ),
-
-            // 登録失敗時 => 入力画面に戻る
-            if (page == null)
-              TextButton(
-                child: const Text("ok"),
-                onPressed: () =>
-                    Navigator.of(context, rootNavigator: true).pop(),
-              ),
+            TextButton(
+              child: const Text("入力画面に戻る"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
           ],
         ),
       );

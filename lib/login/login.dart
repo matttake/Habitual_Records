@@ -18,7 +18,7 @@ class Login extends StatelessWidget {
             final _passwordProvider = ref.watch(passwordProvider.notifier);
 
             // stateのスタックを破棄(絶対もっといい方法がある。。)
-            if (_emailProvider.state != '') {
+            if (_emailProvider.state != '' || _passwordProvider.state != '') {
               _emailProvider.state = '';
               _passwordProvider.state = '';
             }
@@ -43,7 +43,7 @@ class Login extends StatelessWidget {
                   },
                 ),
 
-                Container(
+                SizedBox(
                   width: double.infinity,
                   // ログインボタン
                   child: ElevatedButton(
@@ -54,8 +54,6 @@ class Login extends StatelessWidget {
                         await login(
                             _emailProvider.state, _passwordProvider.state);
                         // ログインに成功した場合
-                        // pushReplacement：画面置き換えして全画面へ遷移できなくする
-                        // →いまいち挙動がわかってない、、
                         await Navigator.of(context).pushReplacement(
                           MaterialPageRoute(builder: (context) {
                             return const Home();
@@ -64,7 +62,7 @@ class Login extends StatelessWidget {
                       } catch (e) {
                         // ログインに失敗した場合
                         String msg = "ログインに失敗しました：${e.toString()}";
-                        await dialog(context, msg, _);
+                        await dialog(context, msg);
                       }
                     },
                   ),

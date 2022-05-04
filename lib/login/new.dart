@@ -63,12 +63,15 @@ class NewBody extends StatelessWidget {
                         await register(
                             _emailProvider.state, _passwordProvider.state);
                         // ユーザー登録に成功した場合
-                        await dialog(context, successMessage,
-                            const Setup(newJudge: true));
+                        await dialog(context, successMessage);
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (context) {
+                          return const Setup(newJudge: true);
+                        }), (_) => false);
                       } catch (e) {
                         // ユーザー登録に失敗した場合
                         String msg = "$mistakeMessage：${e.toString()}";
-                        await dialog(context, msg, _);
+                        await dialog(context, msg);
                       }
                     },
                   ),
