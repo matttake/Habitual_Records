@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "Flutter App",
       home: (() {
-        // まだAuthを実装していない
+        // ログイン状態の有無で遷移先を決定
         if (FirebaseAuth.instance.currentUser != null) {
           return const Home();
         } else {

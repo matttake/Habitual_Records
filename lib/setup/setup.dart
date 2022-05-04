@@ -38,7 +38,7 @@ class NewSetup extends StatelessWidget {
             style: TextStyle(fontSize: 17),
           ),
           onPressed: () {
-            Navigator.push(context,
+            Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (context) => const Target()));
           },
         ),
@@ -75,11 +75,11 @@ class SetupBody extends StatelessWidget {
                   child: const Text('ログアウト'),
                   onPressed: () async {
                     await FirebaseAuth.instance.signOut();
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) {
-                        return const MyApp();
-                      }),
-                    );
+
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) {
+                      return const MyApp();
+                    }), (_) => false);
                   },
                 ),
               ),
@@ -98,11 +98,11 @@ class SetupBody extends StatelessWidget {
                         textStyle: const TextStyle(fontSize: 10)),
                     onPressed: () async {
                       await FirebaseAuth.instance.signOut();
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) {
-                          return const MyApp();
-                        }),
-                      );
+
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) {
+                        return const MyApp();
+                      }), (_) => false);
                     },
                   ),
                 ],

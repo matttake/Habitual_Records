@@ -57,10 +57,12 @@ class TargetBody extends StatelessWidget {
                       // 登録に成功した場合
                       if (resultMsg == successMessage) {
                         _targetProvider.resetStr();
-                        await dialog(context, resultMsg, const Home());
+                        await dialog(context, resultMsg);
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => const Home()));
                       } else {
                         // 登録に失敗した場合
-                        await dialog(context, resultMsg, _);
+                        await dialog(context, resultMsg);
                       }
                     },
                   ),
