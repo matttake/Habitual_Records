@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final emailProvider =
@@ -16,37 +15,42 @@ class LoginNotifier extends StateNotifier<String> {
   String setStr(String filedText) {
     return state = filedText;
   }
+}
 
-  // User新規登録
-  Future register(String email, String password) async {
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    await auth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-  }
+// User新規登録
+Future register(String email, String password) async {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  await auth.createUserWithEmailAndPassword(
+    email: email,
+    password: password,
+  );
+}
 
-  // ログイン
-  Future login(String email, String password) async {
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    await auth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-  }
+// ログイン
+Future login(String email, String password) async {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  await auth.signInWithEmailAndPassword(
+    email: email,
+    password: password,
+  );
+}
 
-  // ダイアログ
-  Future dialog(context, message, page) {
-    return showDialog(
-      context: context,
-      builder: (_) {
-        return AlertDialog(
+// ダイアログ
+Future dialog(context, message, page) {
+  return showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (BuildContext context) {
+      return WillPopScope(
+        // 戻るボタンを無効にする
+        onWillPop: () async => false,
+        child: AlertDialog(
           title: Text(message),
           actions: <Widget>[
             // 登録成功時 => 画面遷移
             if (page != null)
               TextButton(
-                child: Text("ok"),
+                child: const Text("ok"),
                 onPressed: () => Navigator.of(context)
                     .pushReplacement(MaterialPageRoute(builder: (context) {
                   return page;
@@ -56,12 +60,13 @@ class LoginNotifier extends StateNotifier<String> {
             // 登録失敗時 => 入力画面に戻る
             if (page == null)
               TextButton(
-                child: Text("ok"),
-                onPressed: () => Navigator.pop(context),
+                child: const Text("ok"),
+                onPressed: () =>
+                    Navigator.of(context, rootNavigator: true).pop(),
               ),
           ],
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
 }

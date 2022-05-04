@@ -16,7 +16,12 @@ class Login extends StatelessWidget {
           child: Consumer(builder: (context, ref, _) {
             final _emailProvider = ref.watch(emailProvider.notifier);
             final _passwordProvider = ref.watch(passwordProvider.notifier);
-            final _loginInstance = ref.read(insProvider);
+
+            // stateのスタックを破棄(絶対もっといい方法がある。。)
+            if (_emailProvider.state != '') {
+              _emailProvider.state = '';
+              _passwordProvider.state = '';
+            }
 
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -42,22 +47,24 @@ class Login extends StatelessWidget {
                   width: double.infinity,
                   // ログインボタン
                   child: ElevatedButton(
-                    child: Text('ログイン'),
+                    child: const Text('ログイン'),
                     onPressed: () async {
                       try {
                         // メール/パスワードでログイン
-                        await _loginInstance.login(
+                        await login(
                             _emailProvider.state, _passwordProvider.state);
                         // ログインに成功した場合
+                        // pushReplacement：画面置き換えして全画面へ遷移できなくする
+                        // →いまいち挙動がわかってない、、
                         await Navigator.of(context).pushReplacement(
                           MaterialPageRoute(builder: (context) {
-                            return Home();
+                            return const Home();
                           }),
                         );
                       } catch (e) {
                         // ログインに失敗した場合
                         String msg = "ログインに失敗しました：${e.toString()}";
-                        await _loginInstance.dialog(context, msg, _);
+                        await dialog(context, msg, _);
                       }
                     },
                   ),
@@ -66,13 +73,8 @@ class Login extends StatelessWidget {
                   child: TextButton(
                     child: const Text('新規登録'),
                     onPressed: () {
-                      Navigator.push(context,
+                      Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => const New()));
-                      // Navigator.of(context).pushReplacement(
-                      //   MaterialPageRoute(builder: (context) {
-                      //     return const New();
-                      //   }),
-                      // );
                     },
                   ),
                 ),

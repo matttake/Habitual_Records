@@ -31,7 +31,6 @@ class NewBody extends StatelessWidget {
           child: Consumer(builder: (context, ref, _) {
             final _emailProvider = ref.watch(emailProvider.notifier);
             final _passwordProvider = ref.watch(passwordProvider.notifier);
-            final _loginInstance = ref.read(insProvider);
 
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -61,15 +60,15 @@ class NewBody extends StatelessWidget {
                     onPressed: () async {
                       try {
                         // メール/パスワードでユーザー登録
-                        await _loginInstance.register(
+                        await register(
                             _emailProvider.state, _passwordProvider.state);
                         // ユーザー登録に成功した場合
-                        await _loginInstance.dialog(context, successMessage,
+                        await dialog(context, successMessage,
                             const Setup(newJudge: true));
                       } catch (e) {
                         // ユーザー登録に失敗した場合
                         String msg = "$mistakeMessage：${e.toString()}";
-                        await _loginInstance.dialog(context, msg, _);
+                        await dialog(context, msg, _);
                       }
                     },
                   ),

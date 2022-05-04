@@ -122,33 +122,3 @@ class DropDown extends StatelessWidget {
     );
   }
 }
-
-// ダイアログ
-Future dialog(context, message, page) {
-  return showDialog(
-    context: context,
-    builder: (_) {
-      return AlertDialog(
-        title: Text(message),
-        actions: <Widget>[
-          // 登録成功時 => 画面遷移
-          if (page != null)
-            TextButton(
-              child: const Text("ok"),
-              onPressed: () => Navigator.of(context)
-                  .pushReplacement(MaterialPageRoute(builder: (context) {
-                return page;
-              })),
-            ),
-
-          // 登録失敗時 => 入力画面に戻る
-          if (page == null)
-            TextButton(
-              child: const Text("ok"),
-              onPressed: () => Navigator.pop(context),
-            ),
-        ],
-      );
-    },
-  );
-}
