@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habitual_records/home/home.dart';
 import 'package:habitual_records/target/target_model.dart';
+import '../login/login_model.dart';
 
 class Target extends StatelessWidget {
   const Target({Key? key}) : super(key: key);
@@ -56,7 +57,7 @@ class TargetBody extends StatelessWidget {
                       // 登録に成功した場合
                       if (resultMsg == successMessage) {
                         _targetProvider.resetStr();
-                        await dialog(context, resultMsg, Home());
+                        await dialog(context, resultMsg, const Home());
                       } else {
                         // 登録に失敗した場合
                         await dialog(context, resultMsg, _);
