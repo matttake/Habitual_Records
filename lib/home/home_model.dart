@@ -152,15 +152,20 @@ class HomeModel extends ChangeNotifier {
   Future getSelectedTarget() async {
     final DocumentSnapshot doc =
         await FirebaseFirestore.instance.collection('users').doc(_userId).get();
-    targetName = (doc.data() as Map)['target'];
-    targetType = (doc.data() as Map)['type'];
+    if (doc.data() != null) {
+      targetName = (doc.data() as Map)['target'];
+      targetType = (doc.data() as Map)['type'];
+    }
     return;
   }
 
   // 定数の目標タイプリストのindexを取得
   Future<String> getTargetIndex() async {
+    String _indexNum = '';
     await getSelectedTarget();
-    String _indexNum = constTargetType.indexOf(targetType!).toString();
+    if (targetType != null) {
+      _indexNum = constTargetType.indexOf(targetType!).toString();
+    }
     return _indexNum;
   }
 
