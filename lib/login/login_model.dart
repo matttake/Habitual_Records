@@ -36,7 +36,7 @@ Future login(String email, String password) async {
 }
 
 // ダイアログ
-Future dialog(context, message) {
+Future dialog(context, message, {String btnText = 'OK'}) {
   return showDialog(
     barrierDismissible: false,
     context: context,
@@ -48,7 +48,7 @@ Future dialog(context, message) {
           title: Text(message),
           actions: <Widget>[
             TextButton(
-              child: const Text("入力画面に戻る"),
+              child: Text(btnText),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],

@@ -71,7 +71,7 @@ class NewBody extends StatelessWidget {
                       } catch (e) {
                         // ユーザー登録に失敗した場合
                         String msg = "$mistakeMessage：${e.toString()}";
-                        await dialog(context, msg);
+                        await dialog(context, msg, btnText: '入力画面に戻る');
                       }
                     },
                   ),

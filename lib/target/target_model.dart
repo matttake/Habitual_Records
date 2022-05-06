@@ -82,7 +82,7 @@ class DropDown extends StatelessWidget {
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
         hint: Text(
-          '作業時間を選択',
+          '目標タイプを選択',
           style: TextStyle(
             fontSize: 14,
             color: Theme.of(context).hintColor,
