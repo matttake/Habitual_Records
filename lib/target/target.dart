@@ -62,7 +62,7 @@ class TargetBody extends StatelessWidget {
                             builder: (context) => Home(rebuild: true)));
                       } else {
                         // 登録に失敗した場合
-                        await dialog(context, resultMsg);
+                        await dialog(context, resultMsg, btnText: '入力画面に戻る');
                       }
                     },
                   ),

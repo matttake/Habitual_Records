@@ -62,7 +62,7 @@ class Login extends StatelessWidget {
                       } catch (e) {
                         // ログインに失敗した場合
                         String msg = "ログインに失敗しました：${e.toString()}";
-                        await dialog(context, msg);
+                        await dialog(context, msg, btnText: '入力画面に戻る');
                       }
                     },
                   ),
