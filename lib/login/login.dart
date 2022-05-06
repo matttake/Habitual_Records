@@ -56,7 +56,7 @@ class Login extends StatelessWidget {
                         // ログインに成功した場合
                         await Navigator.of(context).pushReplacement(
                           MaterialPageRoute(builder: (context) {
-                            return const Home();
+                            return Home(rebuild: true);
                           }),
                         );
                       } catch (e) {

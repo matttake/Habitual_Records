@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       home: (() {
         // ログイン状態の有無で遷移先を決定
         if (FirebaseAuth.instance.currentUser != null) {
-          return const Home();
+          return Home();
         } else {
           return const Login();
         }

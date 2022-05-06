@@ -5,7 +5,8 @@ import '../setup/setup.dart';
 import 'home_model.dart';
 
 class Home extends ConsumerWidget {
-  const Home({Key? key}) : super(key: key);
+  Home({this.rebuild, Key? key}) : super(key: key);
+  bool? rebuild = false;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -14,6 +15,12 @@ class Home extends ConsumerWidget {
     // FutureProviderのインスタンス範囲が、このdata配下でしか生きない？
     // data配下を離れると、インスタンス内の変数の値は破棄されるの？
     // インスタンス変数のスコープではなくなるからそらそうか、、
+
+    if (rebuild == true) {
+      ref.refresh(homeFutureProvider);
+      rebuild = false;
+    }
+
     return _homeFutureProvider.when(
         loading: () {
           return const Scaffold(
