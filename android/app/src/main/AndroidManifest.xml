@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.habitual_records">
+    package="com.Yuto.habitual_records">
    <application
         android:label="習慣化記録"
         android:name="${applicationName}"
