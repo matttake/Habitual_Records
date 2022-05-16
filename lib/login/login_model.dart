@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final emailProvider =
@@ -9,17 +9,29 @@ final passwordProvider =
 final insProvider = Provider((ref) => LoginNotifier());
 
 class LoginNotifier extends StateNotifier<String> {
-  LoginNotifier() : super("");
+  LoginNotifier() : super('');
 
   // textfiledの文字列をセット
   String setStr(String filedText) {
     return state = filedText;
   }
+
+  // stateの初期化処理
+  void stateCheck() {
+    if (state != '') {
+      state = '';
+    }
+  }
+
+  // stateを返すだけ
+  String returnState() {
+    return state;
+  }
 }
 
 // User新規登録
-Future register(String email, String password) async {
-  final FirebaseAuth auth = FirebaseAuth.instance;
+Future<void> register(String email, String password) async {
+  final auth = FirebaseAuth.instance;
   await auth.createUserWithEmailAndPassword(
     email: email,
     password: password,
@@ -27,8 +39,8 @@ Future register(String email, String password) async {
 }
 
 // ログイン
-Future login(String email, String password) async {
-  final FirebaseAuth auth = FirebaseAuth.instance;
+Future<void> login(String email, String password) async {
+  final auth = FirebaseAuth.instance;
   await auth.signInWithEmailAndPassword(
     email: email,
     password: password,
@@ -36,7 +48,11 @@ Future login(String email, String password) async {
 }
 
 // ダイアログ
-Future dialog(context, message, {String btnText = 'OK'}) {
+Future<void> dialog(
+  BuildContext context,
+  String message, {
+  String btnText = 'OK',
+}) {
   return showDialog(
     barrierDismissible: false,
     context: context,

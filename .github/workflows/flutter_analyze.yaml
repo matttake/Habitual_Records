@@ -37,7 +37,7 @@ jobs:
       - name: flutter cache
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "2.8.1"
+          flutter-version: "2.10.4"
           channel: "stable"
           cache: true
           cache-key: flutter
@@ -46,7 +46,7 @@ jobs:
       - name: install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "2.8.1"
+          flutter-version: "2.10.4"
           channel: "stable"
 
       # flutter versionの確認
