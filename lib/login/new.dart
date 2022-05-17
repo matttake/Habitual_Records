@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habitual_records/setup/setup.dart';
@@ -73,11 +74,44 @@ class NewBody extends StatelessWidget {
                             ),
                             (_) => false,
                           );
-                        } on Exception catch (e) {
                           // ユーザー登録に失敗した場合
-                          /// check
-                          final msg = '$mistakeMessage：${e.toString()}';
-                          await dialog(context, msg, btnText: '入力画面に戻る');
+                        } on FirebaseAuthException catch (e) {
+                          if (e.code == 'email-already-in-use') {
+                            debugPrint(e.toString());
+                            await dialog(
+                              context,
+                              emailAlreadyUse,
+                              btnText: '入力画面に戻る',
+                            );
+                          } else if (e.code == 'invalid-email') {
+                            debugPrint(e.toString());
+                            await dialog(
+                              context,
+                              emailInvalid,
+                              btnText: '入力画面に戻る',
+                            );
+                          } else if (e.code == 'unknown') {
+                            debugPrint(e.toString());
+                            await dialog(
+                              context,
+                              unknownText,
+                              btnText: '入力画面に戻る',
+                            );
+                          } else if (e.code == 'weak-password') {
+                            debugPrint(e.toString());
+                            await dialog(
+                              context,
+                              weakPassword,
+                              btnText: '入力画面に戻る',
+                            );
+                          } else {
+                            debugPrint(e.toString());
+                            await dialog(
+                              context,
+                              '登録に失敗しました：${e.toString()}',
+                              btnText: '入力画面に戻る',
+                            );
+                          }
                         }
                       },
                     ),
