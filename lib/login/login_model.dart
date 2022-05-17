@@ -2,6 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+// エラーハンドリングメッセージ
+const String emailAlreadyUse = '指定したメールアドレスは登録済みです';
+const String emailInvalid = '指定したメールアドレスは無効な値です';
+const String unknownText = '必要事項を記入してください';
+const String wrongPassword = 'パスワードが一致しません';
+const String userNotFount = '指定したメールアドレスに該当するユーザーが見つかりません';
+const String weakPassword = 'パスワードは6桁以上で設定してください';
+
 final emailProvider =
     StateNotifierProvider<LoginNotifier, String>((ref) => LoginNotifier());
 final passwordProvider =
@@ -72,4 +80,30 @@ Future<void> dialog(
       );
     },
   );
+}
+
+// FirebaseAuthのエラーハンドリングダイアログ
+Future<void> errorHandlingDialog(
+  BuildContext context,
+  FirebaseAuthException e,
+) {
+  debugPrint(e.toString());
+  var errorMessage = '';
+  if (e.code == 'email-already-in-use') {
+    errorMessage = emailAlreadyUse;
+  } else if (e.code == 'invalid-email') {
+    errorMessage = emailInvalid;
+  } else if (e.code == 'unknown') {
+    errorMessage = unknownText;
+  } else if (e.code == 'weak-password') {
+    errorMessage = weakPassword;
+  } else if (e.code == 'user-not-found') {
+    errorMessage = userNotFount;
+  } else if (e.code == 'wrong-password') {
+    errorMessage = wrongPassword;
+  } else {
+    errorMessage = '登録に失敗しました：${e.toString()}';
+  }
+
+  return dialog(context, errorMessage, btnText: '入力画面に戻る');
 }
