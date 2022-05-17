@@ -60,43 +60,12 @@ class Login extends StatelessWidget {
                               },
                             ),
                           );
+                          // ログイン失敗した場合
                         } on FirebaseAuthException catch (e) {
-                          if (e.code == 'user-not-found') {
-                            debugPrint(e.toString());
-                            await dialog(
-                              context,
-                              userNotFount,
-                              btnText: '入力画面に戻る',
-                            );
-                          } else if (e.code == 'invalid-email') {
-                            debugPrint(e.toString());
-                            await dialog(
-                              context,
-                              emailInvalid,
-                              btnText: '入力画面に戻る',
-                            );
-                          } else if (e.code == 'unknown') {
-                            debugPrint(e.toString());
-                            await dialog(
-                              context,
-                              unknownText,
-                              btnText: '入力画面に戻る',
-                            );
-                          } else if (e.code == 'wrong-password') {
-                            debugPrint(e.toString());
-                            await dialog(
-                              context,
-                              unknownText,
-                              btnText: '入力画面に戻る',
-                            );
-                          } else {
-                            debugPrint(e.toString());
-                            await dialog(
-                              context,
-                              '登録に失敗しました：${e.toString()}',
-                              btnText: '入力画面に戻る',
-                            );
-                          }
+                          await errorHandlingDialog(
+                            context,
+                            e,
+                          );
                         }
                       },
                     ),

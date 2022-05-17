@@ -81,3 +81,29 @@ Future<void> dialog(
     },
   );
 }
+
+// FirebaseAuthのエラーハンドリングダイアログ
+Future<void> errorHandlingDialog(
+  BuildContext context,
+  FirebaseAuthException e,
+) {
+  debugPrint(e.toString());
+  var errorMessage = '';
+  if (e.code == 'email-already-in-use') {
+    errorMessage = emailAlreadyUse;
+  } else if (e.code == 'invalid-email') {
+    errorMessage = emailInvalid;
+  } else if (e.code == 'unknown') {
+    errorMessage = unknownText;
+  } else if (e.code == 'weak-password') {
+    errorMessage = weakPassword;
+  } else if (e.code == 'user-not-found') {
+    errorMessage = userNotFount;
+  } else if (e.code == 'wrong-password') {
+    errorMessage = wrongPassword;
+  } else {
+    errorMessage = '登録に失敗しました：${e.toString()}';
+  }
+
+  return dialog(context, errorMessage, btnText: '入力画面に戻る');
+}
