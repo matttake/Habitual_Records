@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habitual_records/setup/setup.dart';
@@ -73,11 +74,12 @@ class NewBody extends StatelessWidget {
                             ),
                             (_) => false,
                           );
-                        } on Exception catch (e) {
                           // ユーザー登録に失敗した場合
-                          /// check
-                          final msg = '$mistakeMessage：${e.toString()}';
-                          await dialog(context, msg, btnText: '入力画面に戻る');
+                        } on FirebaseAuthException catch (e) {
+                          await errorHandlingDialog(
+                            context,
+                            e,
+                          );
                         }
                       },
                     ),
