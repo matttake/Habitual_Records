@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     Firebase.initializeApp(); // new
     return MaterialApp(
+      debugShowCheckedModeBanner: false, // DEBUG表記を消す
       title: 'Flutter App',
       home: (() {
         // ログイン状態の有無で遷移先を決定
