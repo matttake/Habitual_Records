@@ -1,14 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
 import 'home/home.dart';
 import 'login/login.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  initializeDateFormatting('ja');
+  await initializeDateFormatting('ja');
   await Firebase.initializeApp();
   runApp(
     const ProviderScope(
@@ -24,7 +25,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     Firebase.initializeApp(); // new
     return MaterialApp(
-      title: "Flutter App",
+      debugShowCheckedModeBanner: false, // DEBUG表記を消す
+      title: 'Flutter App',
       home: (() {
         // ログイン状態の有無で遷移先を決定
         if (FirebaseAuth.instance.currentUser != null) {

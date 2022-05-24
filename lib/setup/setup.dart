@@ -6,7 +6,7 @@ import '../target/target.dart';
 
 class Setup extends StatelessWidget {
   const Setup({this.newJudge, Key? key}) : super(key: key);
-  final newJudge;
+  final bool? newJudge;
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +14,11 @@ class Setup extends StatelessWidget {
       return const Scaffold(body: NewSetup());
     } else {
       return Scaffold(
-          appBar: AppBar(
-            title: const Text("設定"),
-          ),
-          body: const SetupBody());
+        appBar: AppBar(
+          title: const Text('設定'),
+        ),
+        body: const SetupBody(),
+      );
     }
   }
 }
@@ -27,23 +28,28 @@ class NewSetup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Container(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
           margin: const EdgeInsets.only(bottom: 40),
-          child: const Text("目標を設定して今すぐ始めよう！")),
-      Center(
-        child: TextButton(
-          child: const Text(
-            '目標を設定する',
-            style: TextStyle(fontSize: 17),
-          ),
-          onPressed: () {
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const Target()));
-          },
+          child: const Text('目標を設定して今すぐ始めよう！'),
         ),
-      ),
-    ]);
+        Center(
+          child: TextButton(
+            child: const Text(
+              '目標を設定する',
+              style: TextStyle(fontSize: 17),
+            ),
+            onPressed: () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute<void>(builder: (context) => const Target()),
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -52,72 +58,88 @@ class SetupBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _insMyPage = SetupModel();
+    final insMyPage = SetupModel();
 
     return FutureBuilder(
-        // FutureBuilderの仕組みがいまいち。なんか中でメソッド処理が複数回走ってる？
-        future: _insMyPage.targetSettingCheck(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+      // FutureBuilderの仕組みがいまいち。なんか中でメソッド処理が複数回走ってる？
+      future: insMyPage.targetSettingCheck(),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
 
-          // 通信が失敗した場合
-          if (snapshot.hasError) {
-            return Column(children: [
+        // 通信が失敗した場合
+        if (snapshot.hasError) {
+          return Column(
+            children: [
               Container(
-                  padding: const EdgeInsets.fromLTRB(5, 15, 5, 25),
-                  child: Text(snapshot.error.toString())),
+                padding: const EdgeInsets.fromLTRB(5, 15, 5, 25),
+                child: Text(snapshot.error.toString()),
+              ),
               Center(
                 child: TextButton(
                   child: const Text('ログアウト'),
                   onPressed: () async {
                     await FirebaseAuth.instance.signOut();
 
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) {
-                      return const MyApp();
-                    }), (_) => false);
+                    await Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute<void>(
+                        builder: (context) {
+                          return const MyApp();
+                        },
+                      ),
+                      (_) => false,
+                    );
                   },
                 ),
               ),
-            ]);
-          }
+            ],
+          );
+        }
 
-          // snapshot.dataがnull以外の場合
-          if (snapshot.hasData) {
-            return Column(children: [
+        // snapshot.dataがnull以外の場合
+        if (snapshot.hasData) {
+          return Column(
+            children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    child: const Text('ログアウト'),
                     style: TextButton.styleFrom(
-                        textStyle: const TextStyle(fontSize: 10)),
+                      textStyle: const TextStyle(fontSize: 10),
+                    ),
                     onPressed: () async {
                       await FirebaseAuth.instance.signOut();
 
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) {
-                        return const MyApp();
-                      }), (_) => false);
+                      await Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute<void>(
+                          builder: (context) {
+                            return const MyApp();
+                          },
+                        ),
+                        (_) => false,
+                      );
                     },
+                    child: const Text('ログアウト'),
                   ),
                 ],
               ),
               Container(
-                  margin: const EdgeInsets.only(bottom: 20),
-                  child: const Center(child: Text("【目標】"))),
+                margin: const EdgeInsets.only(bottom: 20),
+                child: const Center(child: Text('【目標】')),
+              ),
               Text(
-                snapshot.data,
+                snapshot.data!,
                 style:
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-            ]);
-          }
-          return const Text("500 Error");
-        });
+            ],
+          );
+        }
+        return const Text('500 Error');
+      },
+    );
   }
 }
