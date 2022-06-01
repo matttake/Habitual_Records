@@ -4,103 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-
-// 定数宣言
-const List<String> constMonths = [
-  '01',
-  '02',
-  '03',
-  '04',
-  '05',
-  '06',
-  '07',
-  '08',
-  '09',
-  '10',
-  '11',
-  '12',
-];
-const List<String> constDays = [
-  '1',
-  '2',
-  '3',
-  '4',
-  '5',
-  '6',
-  '7',
-  '8',
-  '9',
-  '10',
-  '11',
-  '12',
-  '13',
-  '14',
-  '15',
-  '16',
-  '17',
-  '18',
-  '19',
-  '20',
-  '21',
-  '22',
-  '23',
-  '24',
-  '25',
-  '26',
-  '27',
-  '28',
-  '29',
-  '30',
-  '31',
-];
-
-const List<String> constTargetType = [
-  '作業時間を登録',
-  '実施回数を登録',
-  '実施の有無を登録',
-];
-
-const List<String> constDropdownMinute = [
-  '10',
-  '20',
-  '30',
-  '40',
-  '50',
-  '60',
-  '70',
-  '80',
-  '90',
-  '100',
-];
-const List<String> countDropdownCount = [
-  '1',
-  '2',
-  '3',
-  '4',
-  '5',
-  '6',
-  '7',
-  '8',
-  '9',
-  '10',
-  '11',
-  '12',
-  '13',
-  '14',
-  '15',
-];
-const List<String> constDropdownFlags = [
-  '1',
-];
-
-const List<List<String>> constTargetItems = [
-  constDropdownMinute,
-  countDropdownCount,
-  constDropdownFlags
-];
-
-const String successMessage = '登録しました。';
-const String mistakeMessage = '作業時間が選択されていません。';
+import '../const/const.dart';
 
 final String year = DateFormat('yyyy').format(DateTime.now());
 final String yearMonth = DateFormat('yyyyMM').format(DateTime.now());
@@ -164,7 +68,7 @@ class HomeModel extends ChangeNotifier {
     var indexNum = '';
     await getSelectedTarget();
     if (targetType != null) {
-      indexNum = constTargetType.indexOf(targetType!).toString();
+      indexNum = (ConstDropdown.targetType).indexOf(targetType!).toString();
     }
     return indexNum;
   }
@@ -220,7 +124,7 @@ class HomeModel extends ChangeNotifier {
         },
         SetOptions(merge: true),
       );
-      snackbarMessage = successMessage;
+      snackbarMessage = ConstDropdown.success;
     } on Exception catch (e) {
       debugPrint(e.toString());
       snackbarMessage = e.toString();
@@ -279,9 +183,9 @@ class DropDown extends StatelessWidget {
               .toList(),
           // ↓itemsのリストにない値だとエラーになる。空文字も。初期化したらだめ。初期値はnull？
           value: (() {
-            if (targetItems == constDays) {
+            if (targetItems == ConstDate.days) {
               return ins.dropdownSelectedDay;
-            } else if (targetItems == constMonths) {
+            } else if (targetItems == ConstDate.months) {
               return ins.dropdownSelectedMonth;
             } else {
               return ins.dropdownSelectedValue;
@@ -289,9 +193,9 @@ class DropDown extends StatelessWidget {
           })(),
           // ライブラリの指定の型をよく見る。ライブラリに合わして変数宣言等しないとうまくいかない。
           onChanged: (String? input) {
-            if (targetItems == constDays) {
+            if (targetItems == ConstDate.days) {
               ins.setDay(input);
-            } else if (targetItems == constMonths) {
+            } else if (targetItems == ConstDate.months) {
               ins.setMonth(input);
             } else {
               ins.setValue(input);
