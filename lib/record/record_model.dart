@@ -4,21 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-
-const List<String> monthArray = [
-  '01',
-  '02',
-  '03',
-  '04',
-  '05',
-  '06',
-  '07',
-  '08',
-  '09',
-  '10',
-  '11',
-  '12'
-];
+import '../const/const.dart';
 
 class RecordModel {
   final String? _userId = FirebaseAuth.instance.currentUser?.uid;
@@ -36,7 +22,7 @@ class RecordModel {
         .doc(_userId)
         .collection(target);
 
-    for (final month in monthArray) {
+    for (final month in ConstDate.months) {
       final docsSnapshot = await collectionRef.doc(year + month).get();
       final docsMap = docsSnapshot.data();
 
@@ -74,7 +60,7 @@ class RecordTotalModel {
         .doc(_userId)
         .collection(target);
 
-    for (final month in monthArray) {
+    for (final month in ConstDate.months) {
       final docsSnapshot = await collectionRef.doc(year + month).get();
       final docsMap = docsSnapshot.data();
 
@@ -192,11 +178,11 @@ class RecordBarChart extends ConsumerWidget {
   List<BarChartGroupData> get barGroups => [
         for (int i = 0; i < 12; i++)
           BarChartGroupData(
-            x: int.parse(monthArray[i]),
+            x: int.parse(ConstDate.days[i]),
             barRods: [
               BarChartRodData(
                 // 月の合計時間をそれぞれ表示
-                toY: (totalTimeArray![i][monthArray[i]]!).toDouble(),
+                toY: (totalTimeArray![i][ConstDate.days[i]]!).toDouble(),
                 color: Colors.lightBlue,
                 //gradient: _barsGradient,
               )

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../const/const.dart';
 import '../record/record.dart';
 import '../setup/setup.dart';
 import 'home_model.dart';
@@ -35,8 +36,8 @@ class Home extends ConsumerWidget {
       error: (err, stack) => Text('Error: $err'),
       data: (indexNum) {
         if (indexNum != '') {
-          final hintText = constTargetType[int.parse(indexNum)];
-          final targetItems = constTargetItems[int.parse(indexNum)];
+          final hintText = ConstDropdown.targetType[int.parse(indexNum)];
+          final targetItems = ConstDropdown.targetItems[int.parse(indexNum)];
 
           return Scaffold(
             appBar: AppBar(
@@ -76,7 +77,7 @@ class Home extends ConsumerWidget {
                       DropDown(
                         changeProvider,
                         month,
-                        constMonths,
+                        ConstDate.months,
                         buttonWidth: 45,
                       ),
                       Container(
@@ -88,7 +89,7 @@ class Home extends ConsumerWidget {
                       DropDown(
                         changeProvider,
                         day,
-                        constDays,
+                        ConstDate.days,
                         buttonWidth: 45,
                       ),
                       Container(
@@ -127,7 +128,7 @@ class Home extends ConsumerWidget {
                             checkResult =
                                 await changeProvider.checkRegistered();
                           } else {
-                            resultMessage = mistakeMessage;
+                            resultMessage = ConstDropdown.mistake;
                             overwriteJudgment = false;
                           }
 
@@ -147,7 +148,7 @@ class Home extends ConsumerWidget {
 
                           /// scackbar部分は別関数として切り出したい。ifの乱立は可読性悪い。
                           // 登録成功時
-                          if (resultMessage == successMessage) {
+                          if (resultMessage == ConstDropdown.success) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 backgroundColor: Colors.lightBlueAccent,
@@ -157,7 +158,7 @@ class Home extends ConsumerWidget {
                             changeProvider.iniStr();
                           }
                           // 作業時間未選択時
-                          else if (resultMessage == mistakeMessage) {
+                          else if (resultMessage == ConstDropdown.mistake) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 backgroundColor: Colors.red,

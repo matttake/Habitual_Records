@@ -3,13 +3,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-// 定数宣言
-const List<String> items = [
-  '作業時間を登録',
-  '実施回数を登録',
-  '実施の有無を登録',
-];
+import '../const/const.dart';
 
 // Provider宣言
 final targetChangeProvider =
@@ -33,9 +27,6 @@ class TargetNotifier extends StateNotifier<String> {
   // 目標登録
   Future<String> register(String? type) async {
     var resultMessage = '';
-    const successMessage = '目標を登録しました。';
-    const failureMessage = '登録に失敗しました。';
-    const nullMessage = '未入力 or 未選択';
     final userId = FirebaseAuth.instance.currentUser!.uid;
 
     // Firestoreに登録
@@ -48,15 +39,15 @@ class TargetNotifier extends StateNotifier<String> {
           'type': type,
           'target': state,
         });
-        resultMessage = successMessage;
+        resultMessage = RegisterMessage.success;
       } on Exception catch (e) {
         debugPrint(e.toString());
-        resultMessage = failureMessage + e.toString();
+        resultMessage = RegisterMessage.failure + e.toString();
       }
     }
     // textFieldが空の場合
     else {
-      resultMessage = nullMessage;
+      resultMessage = RegisterMessage.notEntered;
     }
     return resultMessage;
   }
@@ -89,7 +80,7 @@ class DropDown extends StatelessWidget {
           ),
         ),
         isExpanded: true,
-        items: items
+        items: ConstDropdown.targetType
             .map(
               (item) => DropdownMenuItem<String>(
                 value: item,
