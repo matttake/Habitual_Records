@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../common/dropdown.dart';
 import '../const/const.dart';
 import '../record/record.dart';
 import '../setup/setup.dart';
@@ -75,9 +76,9 @@ class Home extends ConsumerWidget {
                   child: Wrap(
                     children: <Widget>[
                       DropDown(
-                        changeProvider,
-                        month,
-                        ConstDate.months,
+                        hintText: month,
+                        targetItems: ConstDate.months,
+                        homeModelIns: changeProvider,
                         buttonWidth: 45,
                       ),
                       Container(
@@ -87,9 +88,9 @@ class Home extends ConsumerWidget {
                         child: const Text('月'),
                       ),
                       DropDown(
-                        changeProvider,
-                        day,
-                        ConstDate.days,
+                        hintText: day,
+                        targetItems: ConstDate.days,
+                        homeModelIns: changeProvider,
                         buttonWidth: 45,
                       ),
                       Container(
@@ -108,8 +109,11 @@ class Home extends ConsumerWidget {
                       Container(
                         margin: const EdgeInsets.only(bottom: 50),
                         child: Center(
-                          child:
-                              DropDown(changeProvider, hintText, targetItems),
+                          child: DropDown(
+                            hintText: hintText,
+                            targetItems: targetItems,
+                            homeModelIns: changeProvider,
+                          ),
                         ),
                       ),
                       ElevatedButton(
@@ -135,7 +139,7 @@ class Home extends ConsumerWidget {
 
                           // 既に登録済みならダイアログ表示
                           if (checkResult == true) {
-                            overwriteJudgment = await dialog(context);
+                            overwriteJudgment = await registerDialog(context);
                           }
 
                           // REVIEW: なぜかprintが2重呼び出しされてる。要確認。
@@ -165,6 +169,7 @@ class Home extends ConsumerWidget {
                             color = Colors.amberAccent;
                           }
 
+                          // 登録結果をSnackBarで通知
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               backgroundColor: color,

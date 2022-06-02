@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habitual_records/home/home.dart';
 import 'package:habitual_records/target/target_model.dart';
-import '../login/login_model.dart';
+import '../common/dialog.dart';
+import '../common/dropdown.dart';
+import '../const/const.dart';
 
 class Target extends StatelessWidget {
   const Target({Key? key}) : super(key: key);
@@ -42,7 +44,13 @@ class TargetBody extends StatelessWidget {
                     onChanged: targetStateProvider.setStr,
                   ),
                   Center(
-                    child: DropDown(changeProvider),
+                    child: DropDown(
+                      hintText: '目標タイプを選択',
+                      targetItems: ConstDropdown.targetType,
+                      targetModelIns: changeProvider,
+                      buttonWidth: double.infinity,
+                      menuWidth: 200,
+                    ),
                   ),
 
                   SizedBox(
