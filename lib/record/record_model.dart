@@ -178,11 +178,11 @@ class RecordBarChart extends ConsumerWidget {
   List<BarChartGroupData> get barGroups => [
         for (int i = 0; i < 12; i++)
           BarChartGroupData(
-            x: int.parse(ConstDate.days[i]),
+            x: int.parse(ConstDate.months[i]),
             barRods: [
               BarChartRodData(
                 // 月の合計時間をそれぞれ表示
-                toY: (totalTimeArray![i][ConstDate.days[i]]!).toDouble(),
+                toY: (totalTimeArray![i][ConstDate.months[i]]!).toDouble(),
                 color: Colors.lightBlue,
                 //gradient: _barsGradient,
               )

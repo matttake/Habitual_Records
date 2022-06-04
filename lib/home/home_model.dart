@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -133,94 +132,7 @@ class HomeModel extends ChangeNotifier {
   }
 }
 
-// ↓このコメントをするとimmutableの警告消せる。本質的な解決ではない。
-// ignore: must_be_immutable
-class DropDown extends StatelessWidget {
-  DropDown(
-    this.ins,
-    this.hintText,
-    this.targetItems, {
-    this.buttonWidth,
-    Key? key,
-  }) : super(key: key);
-  final HomeModel ins;
-  final String hintText;
-  final List<String> targetItems;
-  double? buttonWidth;
-
-  @override
-  Widget build(BuildContext context) {
-    buttonWidth ??= 150;
-
-    return Container(
-      padding: const EdgeInsets.only(left: 7),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton2(
-          hint: Text(
-            hintText,
-            style: TextStyle(
-              fontSize: 14,
-              color: Theme.of(context).hintColor,
-            ),
-          ),
-          isExpanded: true,
-          items: targetItems
-              .map(
-                (item) => DropdownMenuItem<String>(
-                  value: item,
-                  child: Text(
-                    item,
-                    style: const TextStyle(
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              )
-              .toList(),
-          // ↓itemsのリストにない値だとエラーになる。空文字も。初期化したらだめ。初期値はnull？
-          value: (() {
-            if (targetItems == ConstDate.days) {
-              return ins.dropdownSelectedDay;
-            } else if (targetItems == ConstDate.months) {
-              return ins.dropdownSelectedMonth;
-            } else {
-              return ins.dropdownSelectedValue;
-            }
-          })(),
-          // ライブラリの指定の型をよく見る。ライブラリに合わして変数宣言等しないとうまくいかない。
-          onChanged: (String? input) {
-            if (targetItems == ConstDate.days) {
-              ins.setDay(input);
-            } else if (targetItems == ConstDate.months) {
-              ins.setMonth(input);
-            } else {
-              ins.setValue(input);
-            }
-          },
-
-          buttonHeight: 40,
-          buttonWidth: buttonWidth,
-          itemHeight: 40,
-          dropdownMaxHeight: 200,
-          dropdownWidth: 100,
-          //dropdownPadding: const EdgeInsets.symmetric(vertical: 33),
-          dropdownPadding: null,
-          dropdownElevation: 8,
-          scrollbarRadius: const Radius.circular(40),
-          scrollbarThickness: 6,
-          scrollbarAlwaysShow: true,
-          //offset: const Offset(-20, 0),
-        ),
-      ),
-    );
-  }
-}
-
-Future<bool?> dialog(BuildContext context) {
+Future<bool?> registerDialog(BuildContext context) {
   return showDialog<bool>(
     barrierDismissible: false,
     context: context,

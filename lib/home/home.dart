@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../common/dropdown.dart';
 import '../const/const.dart';
 import '../record/record.dart';
 import '../setup/setup.dart';
@@ -75,9 +76,9 @@ class Home extends ConsumerWidget {
                   child: Wrap(
                     children: <Widget>[
                       DropDown(
-                        changeProvider,
-                        month,
-                        ConstDate.months,
+                        hintText: month,
+                        targetItems: ConstDate.months,
+                        homeModelIns: changeProvider,
                         buttonWidth: 45,
                       ),
                       Container(
@@ -87,9 +88,9 @@ class Home extends ConsumerWidget {
                         child: const Text('月'),
                       ),
                       DropDown(
-                        changeProvider,
-                        day,
-                        ConstDate.days,
+                        hintText: day,
+                        targetItems: ConstDate.days,
+                        homeModelIns: changeProvider,
                         buttonWidth: 45,
                       ),
                       Container(
@@ -108,8 +109,11 @@ class Home extends ConsumerWidget {
                       Container(
                         margin: const EdgeInsets.only(bottom: 50),
                         child: Center(
-                          child:
-                              DropDown(changeProvider, hintText, targetItems),
+                          child: DropDown(
+                            hintText: hintText,
+                            targetItems: targetItems,
+                            homeModelIns: changeProvider,
+                          ),
                         ),
                       ),
                       ElevatedButton(
@@ -122,6 +126,7 @@ class Home extends ConsumerWidget {
                           bool? overwriteJudgment = true;
                           var resultMessage = '';
                           var checkResult = false;
+                          var color = Colors.lightBlueAccent;
 
                           // ドロップダウンの値が選択されているなら、Firestoreに本日の値が既に登録済みかを確認。
                           if (changeProvider.dropdownSelectedValue != null) {
@@ -134,7 +139,7 @@ class Home extends ConsumerWidget {
 
                           // 既に登録済みならダイアログ表示
                           if (checkResult == true) {
-                            overwriteJudgment = await dialog(context);
+                            overwriteJudgment = await registerDialog(context);
                           }
 
                           // REVIEW: なぜかprintが2重呼び出しされてる。要確認。
@@ -146,42 +151,34 @@ class Home extends ConsumerWidget {
                             resultMessage = await changeProvider.addRegister();
                           }
 
-                          /// scackbar部分は別関数として切り出したい。ifの乱立は可読性悪い。
                           // 登録成功時
                           if (resultMessage == ConstDropdown.success) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: Colors.lightBlueAccent,
-                                content: Text(resultMessage),
-                              ),
-                            );
-                            changeProvider.iniStr();
+                            // Pass
                           }
                           // 作業時間未選択時
                           else if (resultMessage == ConstDropdown.mistake) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: Colors.red,
-                                content: Text(resultMessage),
-                              ),
-                            );
-                            // 上書きNGにした場合
-                          } else if (resultMessage == '') {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                backgroundColor: Colors.lightGreen,
-                                content: Text('登録はキャンセルされました'),
-                              ),
-                            );
+                            color = Colors.redAccent;
+                          }
+                          // 上書きNGにした場合
+                          else if (resultMessage == '') {
+                            color = Colors.greenAccent;
+                            resultMessage = '登録はキャンセルされました';
+                          }
+                          // FireStore側のエラーの場合
+                          else {
+                            color = Colors.amberAccent;
+                          }
+
+                          // 登録結果をSnackBarで通知
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: color,
+                              content: Text(resultMessage),
+                            ),
+                          );
+                          // 作業時間未登録以外はState更新
+                          if (resultMessage != ConstDropdown.mistake) {
                             changeProvider.iniStr();
-                            // FireStore側のエラーの場合
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: Colors.amberAccent,
-                                content: Text(resultMessage),
-                              ),
-                            );
                           }
                         },
                         child: const Text('登録'),
