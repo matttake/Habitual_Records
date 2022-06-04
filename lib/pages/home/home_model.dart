@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../const/const.dart';
+import '../../const/const.dart';
 
 final String year = DateFormat('yyyy').format(DateTime.now());
 final String yearMonth = DateFormat('yyyyMM').format(DateTime.now());

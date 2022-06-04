@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:habitual_records/main.dart';
-import 'package:habitual_records/setup/setup_model.dart';
+import 'package:habitual_records/pages/setup/setup_model.dart';
 import '../target/target.dart';
 
 class Setup extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../common/dropdown.dart';
-import '../const/const.dart';
+import '../../common/dropdown.dart';
+import '../../const/const.dart';
 import '../record/record.dart';
 import '../setup/setup.dart';
 import 'home_model.dart';

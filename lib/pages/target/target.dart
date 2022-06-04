@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:habitual_records/home/home.dart';
-import 'package:habitual_records/target/target_model.dart';
-import '../common/dialog.dart';
-import '../common/dropdown.dart';
-import '../const/const.dart';
+import 'package:habitual_records/pages/target/target_model.dart';
+import '../../common/dialog.dart';
+import '../../common/dropdown.dart';
+import '../../const/const.dart';
+import '../home/home.dart';
 
 class Target extends StatelessWidget {
   const Target({Key? key}) : super(key: key);

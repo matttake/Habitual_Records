@@ -1,29 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:habitual_records/setup/setup.dart';
-import '../common/dialog.dart';
+import '../home/home.dart';
 import 'login_model.dart';
+import 'new.dart';
 
-class New extends StatelessWidget {
-  const New({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('新規登録'),
-      ),
-      body: const NewBody(),
-    );
-  }
-}
-
-const String successMessage = 'ユーザー登録が完了しました！';
-const String mistakeMessage = '登録に失敗しました';
-
-class NewBody extends StatelessWidget {
-  const NewBody({Key? key}) : super(key: key);
+class Login extends StatelessWidget {
+  const Login({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +19,10 @@ class NewBody extends StatelessWidget {
               final emailStateProvider = ref.watch(emailProvider.notifier);
               final passwordStateProvider =
                   ref.watch(passwordProvider.notifier);
+
+              // stateのスタックを破棄(絶対もっといい方法がある。。)
+              emailStateProvider.stateCheck();
+              passwordStateProvider.stateCheck();
 
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -55,33 +42,43 @@ class NewBody extends StatelessWidget {
 
                   SizedBox(
                     width: double.infinity,
-                    // ユーザー登録ボタン
+                    // ログインボタン
                     child: ElevatedButton(
-                      child: const Text('ユーザー登録'),
+                      child: const Text('ログイン'),
                       onPressed: () async {
                         try {
-                          // メール/パスワードでユーザー登録
-                          await register(
+                          // メール/パスワードでログイン
+                          await login(
                             emailStateProvider.returnState(),
                             passwordStateProvider.returnState(),
                           );
-                          // ユーザー登録に成功した場合
-                          await dialog(context, successMessage);
-                          await Navigator.of(context).pushAndRemoveUntil(
+                          // ログインに成功した場合
+                          await Navigator.of(context).pushReplacement(
                             MaterialPageRoute<void>(
                               builder: (context) {
-                                return const Setup(newJudge: true);
+                                return Home(rebuild: true);
                               },
                             ),
-                            (_) => false,
                           );
-                          // ユーザー登録に失敗した場合
+                          // ログイン失敗した場合
                         } on FirebaseAuthException catch (e) {
                           await errorHandlingDialog(
                             context,
                             e,
                           );
                         }
+                      },
+                    ),
+                  ),
+                  Center(
+                    child: TextButton(
+                      child: const Text('新規登録'),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (context) => const New(),
+                          ),
+                        );
                       },
                     ),
                   ),

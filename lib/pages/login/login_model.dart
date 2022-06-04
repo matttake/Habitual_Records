@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../common/dialog.dart';
-import '../const/const.dart';
+import '../../common/dialog.dart';
+import '../../const/const.dart';
 
 final emailProvider =
     StateNotifierProvider<LoginNotifier, String>((ref) => LoginNotifier());
