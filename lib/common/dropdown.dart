@@ -1,8 +1,8 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import '../const/const.dart';
-import '../home/home_model.dart';
-import '../target/target_model.dart';
+import '../pages/home/home_model.dart';
+import '../pages/target/target_model.dart';
 
 // ↓このコメントをするとimmutableの警告消せる。本質的な解決ではない。
 // ignore: must_be_immutable
