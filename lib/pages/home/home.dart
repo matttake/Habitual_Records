@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/dropdown.dart';
+import '../../common/is_release.dart';
 import '../../const/const.dart';
 import '../record/record.dart';
 import '../setup/setup.dart';
@@ -42,7 +43,7 @@ class Home extends ConsumerWidget {
 
           return Scaffold(
             appBar: AppBar(
-              title: const Text('習慣化記録'),
+              title: Text(isRelease() ? '習慣化記録' : '習慣化記録(開発環境)'),
               leading: IconButton(
                 icon: const Icon(Icons.settings),
                 iconSize: 20,
