@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/dialog.dart';
+import '../../common/is_release.dart';
 import '../setup/setup.dart';
 import 'login_model.dart';
 
@@ -42,7 +43,9 @@ class NewBody extends StatelessWidget {
                 children: <Widget>[
                   // メールアドレス入力
                   TextFormField(
-                    decoration: const InputDecoration(labelText: 'メールアドレス'),
+                    decoration: InputDecoration(
+                      labelText: isRelease() ? 'メールアドレス' : 'メールアドレス(開発環境)',
+                    ),
                     onChanged: emailStateProvider.setStr,
                   ),
 

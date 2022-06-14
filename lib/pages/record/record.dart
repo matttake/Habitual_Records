@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../common/is_release.dart';
 import 'record_model.dart';
 
 class Record extends StatelessWidget {
@@ -9,7 +10,7 @@ class Record extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(text),
+        title: Text(text + (isRelease() ? '' : '(開発環境)')),
         // 引数のtextの値でIconButton表示/非表示を判定
         actions: (() {
           if (text == '月毎の記録') {

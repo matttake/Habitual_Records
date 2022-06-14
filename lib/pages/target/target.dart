@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habitual_records/pages/target/target_model.dart';
 import '../../common/dialog.dart';
 import '../../common/dropdown.dart';
+import '../../common/is_release.dart';
 import '../../const/const.dart';
 import '../home/home.dart';
 
@@ -13,7 +14,7 @@ class Target extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('目標の設定'),
+        title: Text(isRelease() ? '目標の設定' : '目標の設定(開発環境)'),
       ),
       body: const TargetBody(),
     );

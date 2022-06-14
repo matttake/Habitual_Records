@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../common/is_release.dart';
 import '../home/home.dart';
 import 'login_model.dart';
 import 'new.dart';
@@ -29,7 +30,9 @@ class Login extends StatelessWidget {
                 children: <Widget>[
                   // メールアドレス入力
                   TextFormField(
-                    decoration: const InputDecoration(labelText: 'メールアドレス'),
+                    decoration: InputDecoration(
+                      labelText: isRelease() ? 'メールアドレス' : 'メールアドレス(開発環境)',
+                    ),
                     onChanged: emailStateProvider.setStr,
                   ),
 
