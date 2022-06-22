@@ -114,3 +114,8 @@ class RegisterMessage {
   static const failure = '登録に失敗しました。';
   static const notEntered = '未入力 or 未選択';
 }
+
+// 積み上げ登録時のDialogメッセージ
+const String registerBodyMsg = '選択された日付には既に記録が登録されていますが、上書きしますか？';
+const String registerTrueMsg = '上書き登録する';
+const String registerFalseMsg = '登録しない';

@@ -131,29 +131,3 @@ class HomeModel extends ChangeNotifier {
     return snackbarMessage;
   }
 }
-
-Future<bool?> registerDialog(BuildContext context) {
-  return showDialog<bool>(
-    barrierDismissible: false,
-    context: context,
-    builder: (BuildContext context) {
-      return WillPopScope(
-        // 戻るボタンを無効にする
-        onWillPop: () async => false,
-        child: AlertDialog(
-          title: const Text('選択された日付には既に記録が登録されていますが、上書きしますか？'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('上書き登録する'),
-              onPressed: () => Navigator.of(context).pop(true),
-            ),
-            TextButton(
-              child: const Text('登録しない'),
-              onPressed: () => Navigator.of(context).pop(false),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
