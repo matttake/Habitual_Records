@@ -116,6 +116,17 @@ class RegisterMessage {
 }
 
 // 積み上げ登録時のDialogメッセージ
-const String registerBodyMsg = '選択された日付には既に記録が登録されていますが、上書きしますか？';
-const String registerTrueMsg = '上書き登録する';
-const String registerFalseMsg = '登録しない';
+class TaskRegister {
+  static const String bodyMsg = '選択された日付には既に記録が登録されていますが、上書きしますか？';
+  static const String trueMsg = '上書き登録する';
+  static const String falseMsg = '登録しない';
+}
+
+// アカウント削除時のDialogメッセージ
+class AccountDelete {
+  static const String bodyMsg =
+      'アカウントを削除すると今までの記録も全て削除されます。本当に削除しますか？(この操作は取り消せません)';
+  static const String trueMsg = '削除する';
+  static const String falseMsg = 'キャンセル';
+  static const String resultMsg = 'アカウントを削除しました';
+}

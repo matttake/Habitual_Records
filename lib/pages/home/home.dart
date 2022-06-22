@@ -143,9 +143,9 @@ class Home extends ConsumerWidget {
                           if (checkResult == true) {
                             overwriteJudgment = await boolDialog(
                               context,
-                              registerBodyMsg,
-                              registerTrueMsg,
-                              registerFalseMsg,
+                              TaskRegister.bodyMsg,
+                              TaskRegister.trueMsg,
+                              TaskRegister.falseMsg,
                             );
                           }
 

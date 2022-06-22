@@ -32,8 +32,9 @@ Future<bool?> boolDialog(
   BuildContext context,
   String bodyMsg,
   String trueMsg,
-  String falseMsg,
-) {
+  String falseMsg, [
+  MaterialColor? customColor,
+]) {
   return showDialog<bool>(
     barrierDismissible: false,
     context: context,
@@ -45,8 +46,12 @@ Future<bool?> boolDialog(
           title: Text(bodyMsg),
           actions: <Widget>[
             TextButton(
-              child: Text(trueMsg),
+              style: TextButton.styleFrom(
+                backgroundColor: customColor, //指定無ければ背景色なし
+                primary: Colors.red,
+              ),
               onPressed: () => Navigator.of(context).pop(true),
+              child: Text(trueMsg),
             ),
             TextButton(
               child: Text(falseMsg),

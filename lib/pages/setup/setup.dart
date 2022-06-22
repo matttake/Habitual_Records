@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:habitual_records/main.dart';
 import 'package:habitual_records/pages/setup/setup_model.dart';
+import '../account/account.dart';
 import '../target/target.dart';
 
 class Setup extends StatelessWidget {
@@ -110,19 +111,15 @@ class SetupBody extends StatelessWidget {
                     style: TextButton.styleFrom(
                       textStyle: const TextStyle(fontSize: 10),
                     ),
-                    onPressed: () async {
-                      await FirebaseAuth.instance.signOut();
-
-                      await Navigator.of(context).pushAndRemoveUntil(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
                         MaterialPageRoute<void>(
-                          builder: (context) {
-                            return const MyApp();
-                          },
+                          builder: (context) => const Account(),
                         ),
-                        (_) => false,
                       );
                     },
-                    child: const Text('ログアウト'),
+                    child: const Text('アカウント設定'),
                   ),
                 ],
               ),
