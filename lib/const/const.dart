@@ -129,4 +129,5 @@ class AccountDelete {
   static const String trueMsg = '削除する';
   static const String falseMsg = 'キャンセル';
   static const String resultMsg = 'アカウントを削除しました';
+  static const String errorMsg = 'アカウントを削除に失敗しました';
 }

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:habitual_records/pages/account/account_model.dart';
 
 import '../../common/dialog.dart';
 import '../../const/const.dart';
@@ -25,7 +26,7 @@ class AccountBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool? deleteJudge; // アカウント削除判定
+    bool? deleteJudge; // アカウント削除判定変数
 
     return Column(
       children: [
@@ -69,22 +70,27 @@ class AccountBody extends StatelessWidget {
 
             // アカウント削除処理
             if (deleteJudge == true) {
-              await FirebaseAuth.instance.signOut();
+              try {
+                // アカウント削除処理
+                await deleteAccount();
+                await FirebaseAuth.instance.signOut();
 
-              /// アカウント削除処理
+                // アカウントが削除されたことを通告
+                await dialog(context, AccountDelete.resultMsg);
 
-              // アカウントが削除されたことを通告
-              await dialog(context, AccountDelete.resultMsg);
-
-              // ログイン画面へ遷移
-              await Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute<void>(
-                  builder: (context) {
-                    return const MyApp();
-                  },
-                ),
-                (_) => false,
-              );
+                // ログイン画面へ遷移
+                await Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute<void>(
+                    builder: (context) {
+                      return const MyApp();
+                    },
+                  ),
+                  (_) => false,
+                );
+              } on Exception catch (e) {
+                debugPrint(e.toString());
+                await dialog(context, AccountDelete.errorMsg + e.toString());
+              }
             }
           },
           child: const Text('アカウントを削除'),
