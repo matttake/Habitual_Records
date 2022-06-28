@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../common/dialog.dart';
 import '../../common/dropdown.dart';
 import '../../common/is_release.dart';
 import '../../const/const.dart';
@@ -140,7 +141,12 @@ class Home extends ConsumerWidget {
 
                           // 既に登録済みならダイアログ表示
                           if (checkResult == true) {
-                            overwriteJudgment = await registerDialog(context);
+                            overwriteJudgment = await boolDialog(
+                              context,
+                              TaskRegister.bodyMsg,
+                              TaskRegister.trueMsg,
+                              TaskRegister.falseMsg,
+                            );
                           }
 
                           // REVIEW: なぜかprintが2重呼び出しされてる。要確認。
