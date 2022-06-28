@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "habitual-records-dev"
+    "dev": "habitual-records-dev",
+    "prd": "habitual-records"
   }
 }
