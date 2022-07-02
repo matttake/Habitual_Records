@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../common/is_release.dart';
+import '../../const/const.dart';
 import 'record_model.dart';
 
 class Record extends StatelessWidget {
@@ -9,6 +10,7 @@ class Record extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: graphBackGroundColor,
       appBar: AppBar(
         title: Text(text + (isRelease() ? '' : '(開発環境)')),
         // 引数のtextの値でIconButton表示/非表示を判定
