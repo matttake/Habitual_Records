@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../common/is_release.dart';
+import '../../const/const.dart';
 import 'record_model.dart';
 
 class Record extends StatelessWidget {
@@ -9,6 +10,7 @@ class Record extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: graphBackGroundColor,
       appBar: AppBar(
         title: Text(text + (isRelease() ? '' : '(開発環境)')),
         // 引数のtextの値でIconButton表示/非表示を判定
@@ -75,16 +77,18 @@ class RecordBody extends StatelessWidget {
 
         // snapshot.dataにデータが格納されていれば
         if (snapshot.hasData) {
-          return AspectRatio(
-            aspectRatio: 1.7,
-            child: Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(0),
+          return SafeArea(
+            child: AspectRatio(
+              aspectRatio: 1.7,
+              child: Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0),
+                ),
+                margin: EdgeInsets.zero,
+                color: graphBackGroundColor,
+                child: RecordBarChart(snapshot.data),
               ),
-              margin: EdgeInsets.zero,
-              color: const Color(0xff2c4260),
-              child: RecordBarChart(snapshot.data),
             ),
           );
         }

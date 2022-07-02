@@ -1,3 +1,8 @@
+import 'dart:ui';
+
+// グラフの背景色
+const Color graphBackGroundColor = Color(0xff2c4260);
+
 // 日付に関する定数
 class ConstDate {
   static const List<String> months = [

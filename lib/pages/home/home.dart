@@ -71,129 +71,132 @@ class Home extends ConsumerWidget {
                 ),
               ],
             ),
-            body: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Wrap(
-                    children: <Widget>[
-                      DropDown(
-                        hintText: month,
-                        targetItems: ConstDate.months,
-                        homeModelIns: changeProvider,
-                        buttonWidth: 45,
-                      ),
-                      Container(
-                        alignment: Alignment.center,
-                        height: 40,
-                        width: 30,
-                        child: const Text('月'),
-                      ),
-                      DropDown(
-                        hintText: day,
-                        targetItems: ConstDate.days,
-                        homeModelIns: changeProvider,
-                        buttonWidth: 45,
-                      ),
-                      Container(
-                        alignment: Alignment.center,
-                        height: 40,
-                        width: 30,
-                        child: const Text('日'),
-                      ),
-                    ],
+            body: SafeArea(
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Wrap(
+                      children: <Widget>[
+                        DropDown(
+                          hintText: month,
+                          targetItems: ConstDate.months,
+                          homeModelIns: changeProvider,
+                          buttonWidth: 45,
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          height: 40,
+                          width: 30,
+                          child: const Text('月'),
+                        ),
+                        DropDown(
+                          hintText: day,
+                          targetItems: ConstDate.days,
+                          homeModelIns: changeProvider,
+                          buttonWidth: 45,
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          height: 40,
+                          width: 30,
+                          child: const Text('日'),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 50),
-                        child: Center(
-                          child: DropDown(
-                            hintText: hintText,
-                            targetItems: targetItems,
-                            homeModelIns: changeProvider,
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 50),
+                          child: Center(
+                            child: DropDown(
+                              hintText: hintText,
+                              targetItems: targetItems,
+                              homeModelIns: changeProvider,
+                            ),
                           ),
                         ),
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.blue,
-                          onPrimary: Colors.white,
-                          minimumSize: const Size(155, 40),
-                        ),
-                        onPressed: () async {
-                          bool? overwriteJudgment = true;
-                          var resultMessage = '';
-                          var checkResult = false;
-                          var color = Colors.lightBlueAccent;
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.blue,
+                            onPrimary: Colors.white,
+                            minimumSize: const Size(155, 40),
+                          ),
+                          onPressed: () async {
+                            bool? overwriteJudgment = true;
+                            var resultMessage = '';
+                            var checkResult = false;
+                            var color = Colors.lightBlueAccent;
 
-                          // ドロップダウンの値が選択されているなら、Firestoreに本日の値が既に登録済みかを確認。
-                          if (changeProvider.dropdownSelectedValue != null) {
-                            checkResult =
-                                await changeProvider.checkRegistered();
-                          } else {
-                            resultMessage = ConstDropdown.mistake;
-                            overwriteJudgment = false;
-                          }
+                            // ドロップダウンの値が選択されているなら、Firestoreに本日の値が既に登録済みかを確認。
+                            if (changeProvider.dropdownSelectedValue != null) {
+                              checkResult =
+                                  await changeProvider.checkRegistered();
+                            } else {
+                              resultMessage = ConstDropdown.mistake;
+                              overwriteJudgment = false;
+                            }
 
-                          // 既に登録済みならダイアログ表示
-                          if (checkResult == true) {
-                            overwriteJudgment = await boolDialog(
-                              context,
-                              TaskRegister.bodyMsg,
-                              TaskRegister.trueMsg,
-                              TaskRegister.falseMsg,
+                            // 既に登録済みならダイアログ表示
+                            if (checkResult == true) {
+                              overwriteJudgment = await boolDialog(
+                                context,
+                                TaskRegister.bodyMsg,
+                                TaskRegister.trueMsg,
+                                TaskRegister.falseMsg,
+                              );
+                            }
+
+                            // REVIEW: なぜかprintが2重呼び出しされてる。要確認。
+                            // print('bool: ' + _overwriteJudgment.toString());
+                            // print('Message: ' + _resultMessage);
+
+                            // 既存登録アイテム無し or 上書きOKなら、登録処理実行
+                            if (overwriteJudgment == true) {
+                              resultMessage =
+                                  await changeProvider.addRegister();
+                            }
+
+                            // 登録成功時
+                            if (resultMessage == ConstDropdown.success) {
+                              // Pass
+                            }
+                            // 作業時間未選択時
+                            else if (resultMessage == ConstDropdown.mistake) {
+                              color = Colors.redAccent;
+                            }
+                            // 上書きNGにした場合
+                            else if (resultMessage == '') {
+                              color = Colors.greenAccent;
+                              resultMessage = '登録はキャンセルされました';
+                            }
+                            // FireStore側のエラーの場合
+                            else {
+                              color = Colors.amberAccent;
+                            }
+
+                            // 登録結果をSnackBarで通知
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: color,
+                                content: Text(resultMessage),
+                              ),
                             );
-                          }
-
-                          // REVIEW: なぜかprintが2重呼び出しされてる。要確認。
-                          // print('bool: ' + _overwriteJudgment.toString());
-                          // print('Message: ' + _resultMessage);
-
-                          // 既存登録アイテム無し or 上書きOKなら、登録処理実行
-                          if (overwriteJudgment == true) {
-                            resultMessage = await changeProvider.addRegister();
-                          }
-
-                          // 登録成功時
-                          if (resultMessage == ConstDropdown.success) {
-                            // Pass
-                          }
-                          // 作業時間未選択時
-                          else if (resultMessage == ConstDropdown.mistake) {
-                            color = Colors.redAccent;
-                          }
-                          // 上書きNGにした場合
-                          else if (resultMessage == '') {
-                            color = Colors.greenAccent;
-                            resultMessage = '登録はキャンセルされました';
-                          }
-                          // FireStore側のエラーの場合
-                          else {
-                            color = Colors.amberAccent;
-                          }
-
-                          // 登録結果をSnackBarで通知
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              backgroundColor: color,
-                              content: Text(resultMessage),
-                            ),
-                          );
-                          // 作業時間未登録以外はState更新
-                          if (resultMessage != ConstDropdown.mistake) {
-                            changeProvider.iniStr();
-                          }
-                        },
-                        child: const Text('登録'),
-                      ),
-                    ],
+                            // 作業時間未登録以外はState更新
+                            if (resultMessage != ConstDropdown.mistake) {
+                              changeProvider.iniStr();
+                            }
+                          },
+                          child: const Text('登録'),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         } else {
