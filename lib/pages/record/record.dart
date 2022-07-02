@@ -77,16 +77,18 @@ class RecordBody extends StatelessWidget {
 
         // snapshot.dataにデータが格納されていれば
         if (snapshot.hasData) {
-          return AspectRatio(
-            aspectRatio: 1.7,
-            child: Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(0),
+          return SafeArea(
+            child: AspectRatio(
+              aspectRatio: 1.7,
+              child: Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0),
+                ),
+                margin: EdgeInsets.zero,
+                color: graphBackGroundColor,
+                child: RecordBarChart(snapshot.data),
               ),
-              margin: EdgeInsets.zero,
-              color: const Color(0xff2c4260),
-              child: RecordBarChart(snapshot.data),
             ),
           );
         }
