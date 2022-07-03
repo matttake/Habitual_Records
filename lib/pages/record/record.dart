@@ -4,8 +4,10 @@ import '../../const/const.dart';
 import 'record_model.dart';
 
 class Record extends StatelessWidget {
-  const Record({required this.text, Key? key}) : super(key: key);
+  const Record({required this.text, required this.targetType, Key? key})
+      : super(key: key);
   final String text;
+  final String targetType;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,10 @@ class Record extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute<void>(
-                      builder: (context) => const Record(text: '累計'),
+                      builder: (context) => Record(
+                        text: '累計',
+                        targetType: targetType,
+                      ),
                     ),
                   );
                 },
@@ -34,14 +39,24 @@ class Record extends StatelessWidget {
           }
         })(),
       ),
-      body: SizedBox.expand(child: RecordBody(judgeText: text)),
+      body: SizedBox.expand(
+        child: RecordBody(
+          judgeText: text,
+          targetType: targetType,
+        ),
+      ),
     );
   }
 }
 
 class RecordBody extends StatelessWidget {
-  const RecordBody({required this.judgeText, Key? key}) : super(key: key);
+  const RecordBody({
+    required this.judgeText,
+    required this.targetType,
+    Key? key,
+  }) : super(key: key);
   final String judgeText;
+  final String targetType;
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +102,10 @@ class RecordBody extends StatelessWidget {
                 ),
                 margin: EdgeInsets.zero,
                 color: graphBackGroundColor,
-                child: RecordBarChart(snapshot.data),
+                child: RecordBarChart(
+                  totalTimeArray: snapshot.data,
+                  targetType: targetType,
+                ),
               ),
             ),
           );

@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -11,7 +12,6 @@ class RecordModel {
 
   // Firestoreから値取得して、月ごとの合計時間を配列に格納
   Future<List<Map<String, int>>> getTimeSet() async {
-    /// check
     final totalTimeArray = <Map<String, int>>[];
     final target = await getSelectedTarget(_userId);
     final year = DateFormat.y().format(DateTime.now());
@@ -47,7 +47,6 @@ class RecordTotalModel {
 
   // Firestoreから値取得して、累計時間を配列に格納
   Future<List<Map<String, int>>> getTimeSet() async {
-    /// check
     final totalTimeArray = <Map<String, int>>[];
     final target = await getSelectedTarget(_userId);
     var total = 0;
@@ -88,13 +87,18 @@ Future<String> getSelectedTarget(String? userId) async {
 }
 
 class RecordBarChart extends ConsumerWidget {
-  const RecordBarChart(this.totalTimeArray, {Key? key}) : super(key: key);
-
-  /// check
+  const RecordBarChart({
+    required this.totalTimeArray,
+    required this.targetType,
+    Key? key,
+  }) : super(key: key);
   final List<Map<String, int>>? totalTimeArray;
+  final String targetType;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final maxY = maxYCalculation(totalTimeArray, targetType); // bar上限値を動的取得
+
     return BarChart(
       BarChartData(
         barTouchData: barTouchData, // ①タッチ時のアニメーションの設定
@@ -103,8 +107,7 @@ class RecordBarChart extends ConsumerWidget {
         barGroups: barGroups, // ④各barの表示設定。色や幅とか。
         gridData: FlGridData(show: false), // ⑤背景のグリッド表示設定
         alignment: BarChartAlignment.spaceAround, // ⑥barの表示起点の設定
-        // todo:↓即時関数使って動的にbarの高さのMax変更したい。
-        maxY: 300,
+        maxY: maxY, // barの表示上限値
       ),
     );
   }
@@ -190,4 +193,28 @@ class RecordBarChart extends ConsumerWidget {
             showingTooltipIndicators: [0],
           ),
       ];
+}
+
+double maxYCalculation(
+  List<Map<String, int>>? totalTimeArray,
+  String targetType,
+) {
+  final list = <int>[];
+  final minY = ConstGraph.graphMinY[targetType]!;
+  var maxY = 0.0;
+
+  // 最大値(一番作業した月の値)を取得
+  for (var i = 0; i < 12; i++) {
+    list.add(totalTimeArray![i][ConstDate.months[i]]!);
+  }
+  final maxValue = list.reduce(max);
+  final valueY = maxValue * 1.1;
+
+  // 最低値:minYと最大値:valueYを比較して、値の大きい方をmaxYに代入
+  if (minY >= valueY) {
+    maxY = minY;
+  } else {
+    maxY = valueY;
+  }
+  return maxY;
 }
