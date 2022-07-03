@@ -17,6 +17,15 @@ final homeFutureProvider = FutureProvider<String>((ref) async {
   return HomeModel().getTargetIndex();
 });
 
+// 選択中の目標タイプを取得
+Future<String> getTargetType() async {
+  final userId = FirebaseAuth.instance.currentUser!.uid;
+  final DocumentSnapshot doc =
+      await FirebaseFirestore.instance.collection('users').doc(userId).get();
+  final targetType = (doc.data()! as Map)['type'].toString();
+  return targetType;
+}
+
 class HomeModel extends ChangeNotifier {
   // UserID取得
   final String? _userId = FirebaseAuth.instance.currentUser?.uid;

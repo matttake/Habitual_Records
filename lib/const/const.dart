@@ -3,6 +3,16 @@ import 'dart:ui';
 // グラフの背景色
 const Color graphBackGroundColor = Color(0xff2c4260);
 
+// グラフに関する定数
+class ConstGraph {
+  // Barの最小値
+  static const Map<String, double> graphMinY = {
+    '作業時間を登録': 800,
+    '実施回数を登録': 50,
+    '実施の有無を登録': 20
+  };
+}
+
 // 日付に関する定数
 class ConstDate {
   static const List<String> months = [

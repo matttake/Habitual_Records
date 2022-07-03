@@ -60,11 +60,15 @@ class Home extends ConsumerWidget {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.bar_chart),
-                  onPressed: () {
-                    Navigator.push(
+                  onPressed: () async {
+                    final targetType = await getTargetType();
+                    await Navigator.push(
                       context,
                       MaterialPageRoute<void>(
-                        builder: (context) => const Record(text: '月毎の記録'),
+                        builder: (context) => Record(
+                          text: '月毎の記録',
+                          targetType: targetType,
+                        ),
                       ),
                     );
                   },
