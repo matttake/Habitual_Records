@@ -33,7 +33,7 @@
 - [Flutter](https://flutter.dev/) ：SDK
 - [Riverpod](https://riverpod.dev) ：状態管理
 - [fl_chart](https://pub.dev/packages/fl_chart) ：グラフ表示
-- [Firestore](https://firebase.google.com/?hl=ja) ：作業時間等の記録
+- [Firestore](https://firebase.google.com/?hl=ja) ：作業値の保持
 - [Firebase Functions](https://firebase.google.com/?hl=ja) ：アカウント削除
 - [firebase Auth](https://firebase.google.com/?hl=ja) ：アカウント管理
 - [GIthub Actions](https://github.co.jp/features/actions) ：静的解析
