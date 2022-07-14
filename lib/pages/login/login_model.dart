@@ -1,14 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-// エラーハンドリングメッセージ
-const String emailAlreadyUse = '指定したメールアドレスは登録済みです';
-const String emailInvalid = '指定したメールアドレスは無効な値です';
-const String unknownText = '必要事項を記入してください';
-const String wrongPassword = 'パスワードが一致しません';
-const String userNotFount = '指定したメールアドレスに該当するユーザーが見つかりません';
-const String weakPassword = 'パスワードは6桁以上で設定してください';
+import '../../common/dialog.dart';
+import '../../const/const.dart';
 
 final emailProvider =
     StateNotifierProvider<LoginNotifier, String>((ref) => LoginNotifier());
@@ -55,33 +49,6 @@ Future<void> login(String email, String password) async {
   );
 }
 
-// ダイアログ
-Future<void> dialog(
-  BuildContext context,
-  String message, {
-  String btnText = 'OK',
-}) {
-  return showDialog(
-    barrierDismissible: false,
-    context: context,
-    builder: (BuildContext context) {
-      return WillPopScope(
-        // 戻るボタンを無効にする
-        onWillPop: () async => false,
-        child: AlertDialog(
-          title: Text(message),
-          actions: <Widget>[
-            TextButton(
-              child: Text(btnText),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
 // FirebaseAuthのエラーハンドリングダイアログ
 Future<void> errorHandlingDialog(
   BuildContext context,
@@ -90,17 +57,17 @@ Future<void> errorHandlingDialog(
   debugPrint(e.toString());
   var errorMessage = '';
   if (e.code == 'email-already-in-use') {
-    errorMessage = emailAlreadyUse;
+    errorMessage = ErrorMessage.emailAlreadyUse;
   } else if (e.code == 'invalid-email') {
-    errorMessage = emailInvalid;
+    errorMessage = ErrorMessage.emailInvalid;
   } else if (e.code == 'unknown') {
-    errorMessage = unknownText;
+    errorMessage = ErrorMessage.unknownText;
   } else if (e.code == 'weak-password') {
-    errorMessage = weakPassword;
+    errorMessage = ErrorMessage.weakPassword;
   } else if (e.code == 'user-not-found') {
-    errorMessage = userNotFount;
+    errorMessage = ErrorMessage.userNotFount;
   } else if (e.code == 'wrong-password') {
-    errorMessage = wrongPassword;
+    errorMessage = ErrorMessage.wrongPassword;
   } else {
     errorMessage = '登録に失敗しました：${e.toString()}';
   }

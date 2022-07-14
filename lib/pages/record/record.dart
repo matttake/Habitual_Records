@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import '../../common/is_release.dart';
+import '../../const/const.dart';
 import 'record_model.dart';
 
 class Record extends StatelessWidget {
-  const Record({required this.text, Key? key}) : super(key: key);
+  const Record({required this.text, required this.targetType, Key? key})
+      : super(key: key);
   final String text;
+  final String targetType;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: graphBackGroundColor,
       appBar: AppBar(
-        title: Text(text),
+        title: Text(text + (isRelease() ? '' : '(開発環境)')),
         // 引数のtextの値でIconButton表示/非表示を判定
         actions: (() {
           if (text == '月毎の記録') {
@@ -20,7 +25,10 @@ class Record extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute<void>(
-                      builder: (context) => const Record(text: '累計'),
+                      builder: (context) => Record(
+                        text: '累計',
+                        targetType: targetType,
+                      ),
                     ),
                   );
                 },
@@ -31,14 +39,24 @@ class Record extends StatelessWidget {
           }
         })(),
       ),
-      body: SizedBox.expand(child: RecordBody(judgeText: text)),
+      body: SizedBox.expand(
+        child: RecordBody(
+          judgeText: text,
+          targetType: targetType,
+        ),
+      ),
     );
   }
 }
 
 class RecordBody extends StatelessWidget {
-  const RecordBody({required this.judgeText, Key? key}) : super(key: key);
+  const RecordBody({
+    required this.judgeText,
+    required this.targetType,
+    Key? key,
+  }) : super(key: key);
   final String judgeText;
+  final String targetType;
 
   @override
   Widget build(BuildContext context) {
@@ -74,16 +92,21 @@ class RecordBody extends StatelessWidget {
 
         // snapshot.dataにデータが格納されていれば
         if (snapshot.hasData) {
-          return AspectRatio(
-            aspectRatio: 1.7,
-            child: Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(0),
+          return SafeArea(
+            child: AspectRatio(
+              aspectRatio: 1.7,
+              child: Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0),
+                ),
+                margin: EdgeInsets.zero,
+                color: graphBackGroundColor,
+                child: RecordBarChart(
+                  totalTimeArray: snapshot.data,
+                  targetType: targetType,
+                ),
               ),
-              margin: EdgeInsets.zero,
-              color: const Color(0xff2c4260),
-              child: RecordBarChart(snapshot.data),
             ),
           );
         }

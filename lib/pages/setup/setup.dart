@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:habitual_records/main.dart';
-import 'package:habitual_records/setup/setup_model.dart';
+import 'package:habitual_records/pages/setup/setup_model.dart';
+import '../account/account.dart';
 import '../target/target.dart';
 
 class Setup extends StatelessWidget {
@@ -28,27 +29,29 @@ class NewSetup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          margin: const EdgeInsets.only(bottom: 40),
-          child: const Text('目標を設定して今すぐ始めよう！'),
-        ),
-        Center(
-          child: TextButton(
-            child: const Text(
-              '目標を設定する',
-              style: TextStyle(fontSize: 17),
-            ),
-            onPressed: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute<void>(builder: (context) => const Target()),
-              );
-            },
+    return SafeArea(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 40),
+            child: const Text('目標を設定して今すぐ始めよう！'),
           ),
-        ),
-      ],
+          Center(
+            child: TextButton(
+              child: const Text(
+                '目標を設定する',
+                style: TextStyle(fontSize: 17),
+              ),
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute<void>(builder: (context) => const Target()),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -101,41 +104,41 @@ class SetupBody extends StatelessWidget {
 
         // snapshot.dataがnull以外の場合
         if (snapshot.hasData) {
-          return Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      textStyle: const TextStyle(fontSize: 10),
+          return SafeArea(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        textStyle: const TextStyle(fontSize: 10),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (context) => const Account(),
+                          ),
+                        );
+                      },
+                      child: const Text('アカウント設定'),
                     ),
-                    onPressed: () async {
-                      await FirebaseAuth.instance.signOut();
-
-                      await Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute<void>(
-                          builder: (context) {
-                            return const MyApp();
-                          },
-                        ),
-                        (_) => false,
-                      );
-                    },
-                    child: const Text('ログアウト'),
+                  ],
+                ),
+                Container(
+                  margin: const EdgeInsets.only(bottom: 20),
+                  child: const Center(child: Text('【目標】')),
+                ),
+                Text(
+                  snapshot.data!,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
-              ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 20),
-                child: const Center(child: Text('【目標】')),
-              ),
-              Text(
-                snapshot.data!,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ],
+                ),
+              ],
+            ),
           );
         }
         return const Text('500 Error');
