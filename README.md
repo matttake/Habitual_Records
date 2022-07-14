@@ -4,7 +4,7 @@
 
 <p>
   <a href="https://github.com/matttake/Habitual_Records/actions/workflows/flutter_analyze.yaml"> <img alt="flutter analyze" src="https://github.com/matttake/Habitual_Records/actions/workflows/flutter_analyze.yaml/badge.svg"></a>
-  <a href="https://github.com/matttake/Habitual_Records/releases/tag/Ver.0.11"> <img alt="Version" src="https://img.shields.io/badge/version-v1.1.0-dodgerblue"></a>
+  <a href="https://github.com/matttake/Habitual_Records/releases/tag/Ver.1.1.0"> <img alt="Version" src="https://img.shields.io/badge/version-v1.1.0-dodgerblue"></a>
   <a href="https://github.com/matttake/Habitual_Records/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/matttake/Habitual_Records?color=dodgerblue"></a>
   <a href="https://open.vscode.dev/matttake/Habitual_Records"> <img alt="Open in Visual Studio Code" src="https://img.shields.io/static/v1?logo=visualstudiocode&label=&message=Open%20in%20Visual%20Studio%20Code&labelColor=2c2c32&color=dodgerblue&logoColor=007acc"></a>
   <br />
